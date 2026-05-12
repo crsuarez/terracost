@@ -1,0 +1,248 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "1.0.0",
+    "planned_values": {
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_dynamodb_table.on_demand",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "on_demand",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "billing_mode": "PAY_PER_REQUEST",
+                        "name": "on-demand-table",
+                        "hash_key": "id"
+                    }
+                },
+                {
+                    "address": "aws_dynamodb_table.provisioned",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "provisioned",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "billing_mode": "PROVISIONED",
+                        "read_capacity": 10,
+                        "write_capacity": 5,
+                        "name": "provisioned-table",
+                        "hash_key": "id"
+                    }
+                },
+                {
+                    "address": "aws_dynamodb_table.with_pitr",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "with_pitr",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "billing_mode": "PAY_PER_REQUEST",
+                        "name": "pitr-table",
+                        "hash_key": "id",
+                        "point_in_time_recovery": [
+                            {
+                                "enabled": true
+                            }
+                        ]
+                    }
+                },
+                {
+                    "address": "aws_dynamodb_table.with_stream",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "with_stream",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "billing_mode": "PAY_PER_REQUEST",
+                        "name": "stream-table",
+                        "hash_key": "id",
+                        "stream_enabled": true,
+                        "stream_view_type": "NEW_AND_OLD_IMAGES"
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "aws_dynamodb_table.on_demand",
+            "mode": "managed",
+            "type": "aws_dynamodb_table",
+            "name": "on_demand",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "billing_mode": "PAY_PER_REQUEST",
+                    "name": "on-demand-table",
+                    "hash_key": "id"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_dynamodb_table.provisioned",
+            "mode": "managed",
+            "type": "aws_dynamodb_table",
+            "name": "provisioned",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "billing_mode": "PROVISIONED",
+                    "read_capacity": 10,
+                    "write_capacity": 5,
+                    "name": "provisioned-table",
+                    "hash_key": "id"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_dynamodb_table.with_pitr",
+            "mode": "managed",
+            "type": "aws_dynamodb_table",
+            "name": "with_pitr",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "billing_mode": "PAY_PER_REQUEST",
+                    "name": "pitr-table",
+                    "hash_key": "id",
+                    "point_in_time_recovery": [
+                        {
+                            "enabled": true
+                        }
+                    ]
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_dynamodb_table.with_stream",
+            "mode": "managed",
+            "type": "aws_dynamodb_table",
+            "name": "with_stream",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "billing_mode": "PAY_PER_REQUEST",
+                    "name": "stream-table",
+                    "hash_key": "id",
+                    "stream_enabled": true,
+                    "stream_view_type": "NEW_AND_OLD_IMAGES"
+                },
+                "after_unknown": {}
+            }
+        }
+    ],
+    "configuration": {
+        "provider_config": {
+            "aws": {
+                "name": "aws-test",
+                "expressions": {
+                    "region": {
+                        "constant_value": "us-east-1"
+                    }
+                }
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_dynamodb_table.on_demand",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "on_demand",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "billing_mode": {
+                            "constant_value": "PAY_PER_REQUEST"
+                        },
+                        "name": {
+                            "constant_value": "on-demand-table"
+                        },
+                        "hash_key": {
+                            "constant_value": "id"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_dynamodb_table.provisioned",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "provisioned",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "billing_mode": {
+                            "constant_value": "PROVISIONED"
+                        },
+                        "read_capacity": {
+                            "constant_value": 10
+                        },
+                        "write_capacity": {
+                            "constant_value": 5
+                        },
+                        "name": {
+                            "constant_value": "provisioned-table"
+                        },
+                        "hash_key": {
+                            "constant_value": "id"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_dynamodb_table.with_pitr",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "with_pitr",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "billing_mode": {
+                            "constant_value": "PAY_PER_REQUEST"
+                        },
+                        "name": {
+                            "constant_value": "pitr-table"
+                        },
+                        "hash_key": {
+                            "constant_value": "id"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_dynamodb_table.with_stream",
+                    "mode": "managed",
+                    "type": "aws_dynamodb_table",
+                    "name": "with_stream",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "billing_mode": {
+                            "constant_value": "PAY_PER_REQUEST"
+                        },
+                        "name": {
+                            "constant_value": "stream-table"
+                        },
+                        "hash_key": {
+                            "constant_value": "id"
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ]
+        }
+    }
+}

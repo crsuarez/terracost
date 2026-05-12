@@ -10,6 +10,14 @@ const (
 var Default = Usage{
 	ResourceDefaultTypeUsage: map[string]interface{}{
 		// AWS
+		"aws_dynamodb_table": map[string]interface{}{
+			"monthly_read_request_units":  1000000,
+			"monthly_write_request_units": 200000,
+			"storage_gb":                  50,
+			"monthly_pitr_storage_gb":     50,
+			"monthly_on_demand_backup_gb": 0,
+			"monthly_stream_reads":        0,
+		},
 		"aws_cloudwatch_log_group": map[string]interface{}{
 			"storage_gb":                       200,
 			"monthly_data_ingested_gb":         10,

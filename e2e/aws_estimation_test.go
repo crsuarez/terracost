@@ -131,6 +131,78 @@ func TestAWSEstimation(t *testing.T) {
 				"UsageType": "Lambda-ARM-GB-Seconds",
 			},
 		},
+		// DynamoDB products
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-OD-READ",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-ReadUnits",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-OD-WRITE",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-WriteUnits",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-STORAGE",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-StorageUsage",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-PITR",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "DDB-CrossRegionReplication",
+				"UsageType": "DDB-PITRStorageSnapshotByteHrs",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-STREAM",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-StreamsEventDataUnits",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-PROV-RCU",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-ReadUnits",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-DDB-PROV-WCU",
+			Service:  "AmazonDynamoDB",
+			Family:   "AmazonDynamoDB",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "DDB-WriteUnits",
+			},
+		},
 	}
 
 	for _, p := range prods {
@@ -202,6 +274,84 @@ func TestAWSEstimation(t *testing.T) {
 				Unit:     "seconds",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.0000133334),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		// DynamoDB prices
+		{
+			Product: prods[6], // DDB on-demand read
+			Price: price.Price{
+				Unit:     "ReadRequestUnit",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.00000025),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[7], // DDB on-demand write
+			Price: price.Price{
+				Unit:     "WriteRequestUnit",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.00000125),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[8], // DDB storage
+			Price: price.Price{
+				Unit:     "GB-Mo",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.25),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[9], // DDB PITR
+			Price: price.Price{
+				Unit:     "GB-Mo",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.20),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[10], // DDB stream
+			Price: price.Price{
+				Unit:     "ReadRequestUnit",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.00000002),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[11], // DDB provisioned RCU
+			Price: price.Price{
+				Unit:     "ReadCapacityUnit-Hrs",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.000139),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[12], // DDB provisioned WCU
+			Price: price.Price{
+				Unit:     "WriteCapacityUnit-Hrs",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.000694),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -361,6 +511,30 @@ func TestAWSEstimation(t *testing.T) {
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 2)
+		})
+		t.Run("SuccessDynamoDB", func(t *testing.T) {
+			f, err := os.Open("../testdata/aws/dynamodb/plan.json")
+			require.NoError(t, err)
+			defer f.Close()
+
+			plan, err := costestimation.EstimateTerraformPlan(ctx, backend, f, usage.Default, terraformAWSTestProviderInitializer)
+			require.NoError(t, err)
+
+			pcost, err := plan.PriorCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
+
+			// on-demand: read=$0.25, write=$0.25, storage=$12.50 → $13.00
+			// provisioned: RCU=$1.0147, WCU=$2.5331, storage=$12.50 → $16.0478
+			// with_pitr: read=$0.25, write=$0.25, storage=$12.50, PITR=$10.00 → $23.00
+			// with_stream: read=$0.25, write=$0.25, storage=$12.50, stream=$0.0 → $13.00
+			// Total: ~$65.048
+			pcost, err = plan.PlannedCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(65.048), "USD"), pcost)
+
+			diffs := plan.ResourceDifferences()
+			require.Len(t, diffs, 4)
 		})
 		t.Run("SuccessNoPrior", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/terraform-noprior-plan.json")

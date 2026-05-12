@@ -54,6 +54,12 @@ func (p *Provider) ResourceComponents(rss map[string]terraform.Resource, tfRes t
 		}
 		return p.newCloudwatchMetricAlarm(rss, vals).Components()
 
+	case "aws_dynamodb_table":
+		vals, err := decodeDynamoDBTableValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newDynamoDBTable(rss, vals).Components()
 	case "aws_db_instance":
 		vals, err := decodeDBInstanceValues(tfRes.Values)
 		if err != nil {

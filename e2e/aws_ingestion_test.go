@@ -86,4 +86,33 @@ func TestAWSIngestion(t *testing.T) {
 			assert.Len(t, prices, 1)
 		}
 	})
+	t.Run("DynamoDB", func(t *testing.T) {
+		dynCtrl := gomock.NewController(t)
+		defer dynCtrl.Finish()
+
+		dynHTTPClient := mock.NewHTTPClient(dynCtrl)
+
+		dynF, err := os.Open("testdata/aws/dynamodb/AmazonDynamoDB_us-east-1.csv")
+		require.NoError(t, err)
+		defer dynF.Close()
+
+		dynHTTPClient.EXPECT().Do(gomock.Any()).Return(&http.Response{Body: dynF}, nil)
+
+		dynBackend := mysql.NewBackend(db)
+		dynIngester, err := aws.NewIngester("AmazonDynamoDB", "us-east-1", aws.WithHTTPClient(dynHTTPClient))
+		require.NoError(t, err)
+
+		err = costestimation.IngestPricing(ctx, dynBackend, dynIngester)
+		require.NoError(t, err)
+
+		dynProds, err := dynBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonDynamoDB")})
+		require.NoError(t, err)
+		assert.Len(t, dynProds, 8)
+
+		for _, prod := range dynProds {
+			prices, err := dynBackend.Prices().Filter(ctx, prod.ID, nil)
+			require.NoError(t, err)
+			assert.Len(t, prices, 1)
+		}
+	})
 }
