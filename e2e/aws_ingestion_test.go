@@ -115,4 +115,33 @@ func TestAWSIngestion(t *testing.T) {
 			assert.Len(t, prices, 1)
 		}
 	})
+	t.Run("APIGateway", func(t *testing.T) {
+		apigwCtrl := gomock.NewController(t)
+		defer apigwCtrl.Finish()
+
+		apigwHTTPClient := mock.NewHTTPClient(apigwCtrl)
+
+		apigwF, err := os.Open("testdata/aws/api_gateway/AmazonApiGateway_us-east-1.csv")
+		require.NoError(t, err)
+		defer apigwF.Close()
+
+		apigwHTTPClient.EXPECT().Do(gomock.Any()).Return(&http.Response{Body: apigwF}, nil)
+
+		apigwBackend := mysql.NewBackend(db)
+		apigwIngester, err := aws.NewIngester("AmazonApiGateway", "us-east-1", aws.WithHTTPClient(apigwHTTPClient))
+		require.NoError(t, err)
+
+		err = costestimation.IngestPricing(ctx, apigwBackend, apigwIngester)
+		require.NoError(t, err)
+
+		apigwProds, err := apigwBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonApiGateway")})
+		require.NoError(t, err)
+		assert.Len(t, apigwProds, 6)
+
+		for _, prod := range apigwProds {
+			prices, err := apigwBackend.Prices().Filter(ctx, prod.ID, nil)
+			require.NoError(t, err)
+			assert.Len(t, prices, 1)
+		}
+	})
 }

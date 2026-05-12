@@ -16,6 +16,8 @@ func DefaultFilter(_ *price.WithProduct) bool {
 // MinimalFilter only ingests the supported records, skipping those that would never be used.
 func MinimalFilter(pp *price.WithProduct) bool {
 	switch pp.Product.Service {
+	case "AmazonApiGateway":
+		return true // is minimal already
 	case "AmazonCloudWatch":
 		return minimalFilterCloudWatch(pp)
 	case "AmazonDynamoDB":

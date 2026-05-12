@@ -29,6 +29,18 @@ func (p *Provider) Name() string { return p.key }
 // ResourceComponents returns Component queries for a given terraform.Resource.
 func (p *Provider) ResourceComponents(rss map[string]terraform.Resource, tfRes terraform.Resource) []query.Component {
 	switch tfRes.Type {
+	case "aws_api_gateway_rest_api":
+		vals, err := decodeAPIGatewayRestAPIValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newAPIGatewayRestAPI(rss, vals, tfRes).Components()
+	case "aws_apigatewayv2_api":
+		vals, err := decodeApigatewayv2APIValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newApigatewayv2API(rss, vals).Components()
 	case "aws_instance":
 		vals, err := decodeInstanceValues(tfRes.Values)
 		if err != nil {

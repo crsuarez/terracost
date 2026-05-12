@@ -1,0 +1,155 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "1.0.0",
+    "planned_values": {
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_api_gateway_rest_api.rest_api",
+                    "mode": "managed",
+                    "type": "aws_api_gateway_rest_api",
+                    "name": "rest_api",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "name": "my-rest-api"
+                    }
+                },
+                {
+                    "address": "aws_apigatewayv2_api.http_api",
+                    "mode": "managed",
+                    "type": "aws_apigatewayv2_api",
+                    "name": "http_api",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "name": "my-http-api",
+                        "protocol_type": "HTTP"
+                    }
+                },
+                {
+                    "address": "aws_apigatewayv2_api.ws_api",
+                    "mode": "managed",
+                    "type": "aws_apigatewayv2_api",
+                    "name": "ws_api",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "name": "my-ws-api",
+                        "protocol_type": "WEBSOCKET"
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "aws_api_gateway_rest_api.rest_api",
+            "mode": "managed",
+            "type": "aws_api_gateway_rest_api",
+            "name": "rest_api",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "name": "my-rest-api"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_apigatewayv2_api.http_api",
+            "mode": "managed",
+            "type": "aws_apigatewayv2_api",
+            "name": "http_api",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "name": "my-http-api",
+                    "protocol_type": "HTTP"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_apigatewayv2_api.ws_api",
+            "mode": "managed",
+            "type": "aws_apigatewayv2_api",
+            "name": "ws_api",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "name": "my-ws-api",
+                    "protocol_type": "WEBSOCKET"
+                },
+                "after_unknown": {}
+            }
+        }
+    ],
+    "configuration": {
+        "provider_config": {
+            "aws": {
+                "name": "aws-test",
+                "expressions": {
+                    "region": {
+                        "constant_value": "us-east-1"
+                    }
+                }
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_api_gateway_rest_api.rest_api",
+                    "mode": "managed",
+                    "type": "aws_api_gateway_rest_api",
+                    "name": "rest_api",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "name": {
+                            "constant_value": "my-rest-api"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_apigatewayv2_api.http_api",
+                    "mode": "managed",
+                    "type": "aws_apigatewayv2_api",
+                    "name": "http_api",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "name": {
+                            "constant_value": "my-http-api"
+                        },
+                        "protocol_type": {
+                            "constant_value": "HTTP"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_apigatewayv2_api.ws_api",
+                    "mode": "managed",
+                    "type": "aws_apigatewayv2_api",
+                    "name": "ws_api",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "name": {
+                            "constant_value": "my-ws-api"
+                        },
+                        "protocol_type": {
+                            "constant_value": "WEBSOCKET"
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ]
+        }
+    }
+}

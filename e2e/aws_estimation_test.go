@@ -203,6 +203,37 @@ func TestAWSEstimation(t *testing.T) {
 				"Group": "DDB-WriteUnits",
 			},
 		},
+		// API Gateway products
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-APIGW-REST-REQ",
+			Service:  "AmazonApiGateway",
+			Family:   "AmazonApiGateway",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "ApiGatewayRequest",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-APIGW-HTTP-REQ",
+			Service:  "AmazonApiGateway",
+			Family:   "AmazonApiGateway",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "ApiGatewayHttpRequest",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-APIGW-WS-MSG",
+			Service:  "AmazonApiGateway",
+			Family:   "AmazonApiGateway",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "ApiGatewayWebSocketMessage",
+			},
+		},
 	}
 
 	for _, p := range prods {
@@ -352,6 +383,41 @@ func TestAWSEstimation(t *testing.T) {
 				Unit:     "WriteCapacityUnit-Hrs",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.000694),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		// API Gateway prices
+		{
+			Product: prods[13], // REST API requests
+			Price: price.Price{
+				Unit:     "Requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000035),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[14], // HTTP API requests (tier 1)
+			Price: price.Price{
+				Unit:     "Requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.000001),
+				Attributes: map[string]string{
+					"TermType":    "OnDemand",
+					"StartingRange": "0",
+				},
+			},
+		},
+		{
+			Product: prods[15], // WebSocket messages
+			Price: price.Price{
+				Unit:     "Messages",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.000001),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -535,6 +601,29 @@ func TestAWSEstimation(t *testing.T) {
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 4)
+		})
+		t.Run("SuccessAPIGateway", func(t *testing.T) {
+			f, err := os.Open("../testdata/aws/api_gateway/plan.json")
+			require.NoError(t, err)
+			defer f.Close()
+
+			plan, err := costestimation.EstimateTerraformPlan(ctx, backend, f, usage.Default, terraformAWSTestProviderInitializer)
+			require.NoError(t, err)
+
+			pcost, err := plan.PriorCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
+
+			// rest_api: 5M requests * $3.50/M = $17.50
+			// http_api: 5M requests * $1.00/M = $5.00 (all in first tier)
+			// ws_api: 1M messages * $1.00/M = $1.00
+			// Total: $23.50
+			pcost, err = plan.PlannedCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(23.50), "USD"), pcost)
+
+			diffs := plan.ResourceDifferences()
+			require.Len(t, diffs, 3)
 		})
 		t.Run("SuccessNoPrior", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/terraform-noprior-plan.json")

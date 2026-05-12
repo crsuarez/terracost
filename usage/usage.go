@@ -50,6 +50,16 @@ var Default = Usage{
 		"aws_fsx_lustre_file_system": map[string]interface{}{
 			"backup_storage_gb": 1024,
 		},
+		"aws_api_gateway_rest_api": map[string]interface{}{
+			"monthly_requests": 5000000,
+			"cache_enabled":    false,
+			"cache_size_gb":    0.5,
+		},
+		"aws_apigatewayv2_api": map[string]interface{}{
+			"monthly_requests":        5000000,
+			"monthly_message_count":   0,
+			"monthly_connection_minutes": 0,
+		},
 		"aws_lambda_function": map[string]interface{}{
 			"monthly_requests":                        1000000,
 			"request_duration_ms":                     200,
