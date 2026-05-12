@@ -144,4 +144,33 @@ func TestAWSIngestion(t *testing.T) {
 			assert.Len(t, prices, 1)
 		}
 	})
+	t.Run("CloudFront", func(t *testing.T) {
+		cfCtrl := gomock.NewController(t)
+		defer cfCtrl.Finish()
+
+		cfHTTPClient := mock.NewHTTPClient(cfCtrl)
+
+		cfF, err := os.Open("testdata/aws/cloudfront/AmazonCloudFront_us-east-1.csv")
+		require.NoError(t, err)
+		defer cfF.Close()
+
+		cfHTTPClient.EXPECT().Do(gomock.Any()).Return(&http.Response{Body: cfF}, nil)
+
+		cfBackend := mysql.NewBackend(db)
+		cfIngester, err := aws.NewIngester("AmazonCloudFront", "us-east-1", aws.WithHTTPClient(cfHTTPClient))
+		require.NoError(t, err)
+
+		err = costestimation.IngestPricing(ctx, cfBackend, cfIngester)
+		require.NoError(t, err)
+
+		cfProds, err := cfBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonCloudFront")})
+		require.NoError(t, err)
+		assert.Len(t, cfProds, 6)
+
+		for _, prod := range cfProds {
+			prices, err := cfBackend.Prices().Filter(ctx, prod.ID, nil)
+			require.NoError(t, err)
+			assert.Len(t, prices, 1)
+		}
+	})
 }

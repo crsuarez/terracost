@@ -7,6 +7,7 @@ import (
 // SupportedServices is a list of all AWS services that are supported by Terracost.
 var supportedServices = map[string]struct{}{
 	"AmazonApiGateway":  {},
+	"AmazonCloudFront":  {},
 	"AmazonCloudWatch":  {},
 	"AmazonDynamoDB":    {},
 	"AmazonEC2":         {},

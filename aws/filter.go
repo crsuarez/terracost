@@ -18,6 +18,8 @@ func MinimalFilter(pp *price.WithProduct) bool {
 	switch pp.Product.Service {
 	case "AmazonApiGateway":
 		return true // is minimal already
+	case "AmazonCloudFront":
+		return true // is minimal already
 	case "AmazonCloudWatch":
 		return minimalFilterCloudWatch(pp)
 	case "AmazonDynamoDB":

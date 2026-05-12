@@ -23,6 +23,7 @@
   ([Pull #134](https://github.com/cycloidio/terracost/pull/134))
 
 ### Added
+- AWS support for `aws_cloudfront_distribution` (data transfer out by region group, HTTPS/HTTP requests, invalidation requests with free-tier handling, price class filtering) and `aws_cloudfront_function` (invocations)
 - AWS support for `aws_api_gateway_rest_api` (REST API requests, optional cache memory with cross-resource stage lookup) and `aws_apigatewayv2_api` (HTTP API with tiered pricing, WebSocket messages and connection minutes)
 - AWS support for `aws_dynamodb_table` (on-demand RRU/WRU, provisioned RCU/WCU, storage, PITR backup, on-demand backup, streams, GSI)
 - AWS support for `aws_lambda_function` (requests, duration, ephemeral storage, provisioned concurrency)

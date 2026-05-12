@@ -18,6 +18,22 @@ var Default = Usage{
 			"monthly_on_demand_backup_gb": 0,
 			"monthly_stream_reads":        0,
 		},
+		"aws_cloudfront_distribution": map[string]interface{}{
+			"monthly_data_transfer_out_gb": map[string]interface{}{
+				"North America": 1000.0,
+				"Europe":        200.0,
+				"Asia Pacific":  50.0,
+				"South America": 10.0,
+				"Australia":     5.0,
+			},
+			"monthly_https_requests":        10000000,
+			"monthly_http_requests":         0,
+			"monthly_invalidation_requests": 100,
+			"price_class":                   "PriceClass_All",
+		},
+		"aws_cloudfront_function": map[string]interface{}{
+			"monthly_invocations": 2000000,
+		},
 		"aws_cloudwatch_log_group": map[string]interface{}{
 			"storage_gb":                       200,
 			"monthly_data_ingested_gb":         10,

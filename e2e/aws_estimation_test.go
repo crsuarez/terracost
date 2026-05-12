@@ -234,6 +234,57 @@ func TestAWSEstimation(t *testing.T) {
 				"Group": "ApiGatewayWebSocketMessage",
 			},
 		},
+		// CloudFront products
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-CF-DT-NA",
+			Service:  "AmazonCloudFront",
+			Family:   "Data Transfer",
+			Location: "North America",
+			Attributes: map[string]string{
+				"Group": "CloudFront-DataTransfer-Out-Bytes",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-CF-DT-EU",
+			Service:  "AmazonCloudFront",
+			Family:   "Data Transfer",
+			Location: "Europe",
+			Attributes: map[string]string{
+				"Group": "CloudFront-DataTransfer-Out-Bytes",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-CF-HTTPS",
+			Service:  "AmazonCloudFront",
+			Family:   "Request",
+			Location: "North America",
+			Attributes: map[string]string{
+				"Group": "CloudFront-Requests-HTTPS-Proxy",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-CF-INVALIDATION",
+			Service:  "AmazonCloudFront",
+			Family:   "Invalidation",
+			Location: "North America",
+			Attributes: map[string]string{
+				"Group": "CloudFront-Invalidation",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-CF-FUNC",
+			Service:  "AmazonCloudFront",
+			Family:   "CloudFront Functions",
+			Location: "North America",
+			Attributes: map[string]string{
+				"Group": "CloudFront-EdgeFunctions",
+			},
+		},
 	}
 
 	for _, p := range prods {
@@ -418,6 +469,62 @@ func TestAWSEstimation(t *testing.T) {
 				Unit:     "Messages",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.000001),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		// CloudFront prices
+		{
+			Product: prods[16], // CF data transfer NA
+			Price: price.Price{
+				Unit:     "GB",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.085),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[17], // CF data transfer EU
+			Price: price.Price{
+				Unit:     "GB",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.085),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[18], // CF HTTPS requests
+			Price: price.Price{
+				Unit:     "10k requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.01),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[19], // CF invalidation
+			Price: price.Price{
+				Unit:     "requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.005),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[20], // CF function invocations
+			Price: price.Price{
+				Unit:     "Requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000001),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -624,6 +731,31 @@ func TestAWSEstimation(t *testing.T) {
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 3)
+		})
+		t.Run("SuccessCloudFront", func(t *testing.T) {
+			f, err := os.Open("../testdata/aws/cloudfront/plan.json")
+			require.NoError(t, err)
+			defer f.Close()
+
+			plan, err := costestimation.EstimateTerraformPlan(ctx, backend, f, usage.Default, terraformAWSTestProviderInitializer)
+			require.NoError(t, err)
+
+			pcost, err := plan.PriorCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
+
+			// Distribution: NA 1000 GB * $0.085 = $85.00
+			//               EU 200 GB * $0.085 = $17.00
+			//               HTTPS 10M / 10K * $0.01 = $10.00
+			//               Invalidation: 100 (under 1000 free tier) = $0.00
+			// Function: 2M / 1M * $0.10 = $0.20
+			// Total: $112.20
+			pcost, err = plan.PlannedCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(112.20), "USD"), pcost)
+
+			diffs := plan.ResourceDifferences()
+			require.Len(t, diffs, 2)
 		})
 		t.Run("SuccessNoPrior", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/terraform-noprior-plan.json")

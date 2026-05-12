@@ -1,0 +1,111 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "1.0.0",
+    "planned_values": {
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_cloudfront_distribution.cdn",
+                    "mode": "managed",
+                    "type": "aws_cloudfront_distribution",
+                    "name": "cdn",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "price_class": "PriceClass_All"
+                    }
+                },
+                {
+                    "address": "aws_cloudfront_function.viewer_request",
+                    "mode": "managed",
+                    "type": "aws_cloudfront_function",
+                    "name": "viewer_request",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "name": "viewer-request-handler",
+                        "runtime": "cloudfront-js-2.0"
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "aws_cloudfront_distribution.cdn",
+            "mode": "managed",
+            "type": "aws_cloudfront_distribution",
+            "name": "cdn",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "price_class": "PriceClass_All"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_cloudfront_function.viewer_request",
+            "mode": "managed",
+            "type": "aws_cloudfront_function",
+            "name": "viewer_request",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "name": "viewer-request-handler",
+                    "runtime": "cloudfront-js-2.0"
+                },
+                "after_unknown": {}
+            }
+        }
+    ],
+    "configuration": {
+        "provider_config": {
+            "aws": {
+                "name": "aws-test",
+                "expressions": {
+                    "region": {
+                        "constant_value": "us-east-1"
+                    }
+                }
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_cloudfront_distribution.cdn",
+                    "mode": "managed",
+                    "type": "aws_cloudfront_distribution",
+                    "name": "cdn",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "price_class": {
+                            "constant_value": "PriceClass_All"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_cloudfront_function.viewer_request",
+                    "mode": "managed",
+                    "type": "aws_cloudfront_function",
+                    "name": "viewer_request",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "name": {
+                            "constant_value": "viewer-request-handler"
+                        },
+                        "runtime": {
+                            "constant_value": "cloudfront-js-2.0"
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ]
+        }
+    }
+}
