@@ -42,6 +42,11 @@ var Default = Usage{
 		"aws_fsx_lustre_file_system": map[string]interface{}{
 			"backup_storage_gb": 1024,
 		},
+		"aws_lambda_function": map[string]interface{}{
+			"monthly_requests":                        1000000,
+			"request_duration_ms":                     200,
+			"monthly_provisioned_concurrency_seconds": 0,
+		},
 		"aws_nat_gateway": map[string]interface{}{
 			"monthly_data_processed_gb": 10,
 		},

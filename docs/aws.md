@@ -42,6 +42,7 @@ done
 * [`aws_fsx_openzfs_file_system`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/fsx_openzfs_file_system)
 * [`aws_fsx_windows_file_system`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/fsx_windows_file_system)
 * [`aws_kms_key`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key)
+* [`aws_lambda_function`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function)
 * [`aws_lb`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb)
 * [`aws_alb`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/alb)
 * [`aws_nat_gateway`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway)

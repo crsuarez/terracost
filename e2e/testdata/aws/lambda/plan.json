@@ -1,0 +1,136 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "1.0.0",
+    "planned_values": {
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_lambda_function.basic",
+                    "mode": "managed",
+                    "type": "aws_lambda_function",
+                    "name": "basic",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "architectures": ["x86_64"],
+                        "memory_size": 128,
+                        "function_name": "basic-handler"
+                    }
+                },
+                {
+                    "address": "aws_lambda_function.arm_large",
+                    "mode": "managed",
+                    "type": "aws_lambda_function",
+                    "name": "arm_large",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "architectures": ["arm64"],
+                        "memory_size": 3008,
+                        "function_name": "arm-large-handler",
+                        "ephemeral_storage": [
+                            {
+                                "size": 1024
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "aws_lambda_function.basic",
+            "mode": "managed",
+            "type": "aws_lambda_function",
+            "name": "basic",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "architectures": ["x86_64"],
+                    "memory_size": 128,
+                    "function_name": "basic-handler"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_lambda_function.arm_large",
+            "mode": "managed",
+            "type": "aws_lambda_function",
+            "name": "arm_large",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "architectures": ["arm64"],
+                    "memory_size": 3008,
+                    "function_name": "arm-large-handler",
+                    "ephemeral_storage": [
+                        {
+                            "size": 1024
+                        }
+                    ]
+                },
+                "after_unknown": {}
+            }
+        }
+    ],
+    "configuration": {
+        "provider_config": {
+            "aws": {
+                "name": "aws-test",
+                "expressions": {
+                    "region": {
+                        "constant_value": "us-east-1"
+                    }
+                }
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_lambda_function.basic",
+                    "mode": "managed",
+                    "type": "aws_lambda_function",
+                    "name": "basic",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "architectures": {
+                            "constant_value": ["x86_64"]
+                        },
+                        "memory_size": {
+                            "constant_value": 128
+                        },
+                        "function_name": {
+                            "constant_value": "basic-handler"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_lambda_function.arm_large",
+                    "mode": "managed",
+                    "type": "aws_lambda_function",
+                    "name": "arm_large",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "architectures": {
+                            "constant_value": ["arm64"]
+                        },
+                        "memory_size": {
+                            "constant_value": 3008
+                        },
+                        "function_name": {
+                            "constant_value": "arm-large-handler"
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ]
+        }
+    }
+}

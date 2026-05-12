@@ -136,6 +136,12 @@ func (p *Provider) ResourceComponents(rss map[string]terraform.Resource, tfRes t
 			return nil
 		}
 		return p.newKMSKey(rss, vals).Components()
+	case "aws_lambda_function":
+		vals, err := decodeLambdaFunctionValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newLambdaFunction(rss, vals).Components()
 	case "aws_lb", "aws_alb":
 		vals, err := decodeLBValues(tfRes.Values)
 		if err != nil {

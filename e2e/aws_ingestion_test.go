@@ -56,4 +56,34 @@ func TestAWSIngestion(t *testing.T) {
 		require.NoError(t, err)
 		assert.Len(t, prices, 1)
 	}
+
+	t.Run("Lambda", func(t *testing.T) {
+		lambdaCtrl := gomock.NewController(t)
+		defer lambdaCtrl.Finish()
+
+		lambdaHTTPClient := mock.NewHTTPClient(lambdaCtrl)
+
+		lambdaF, err := os.Open("testdata/aws/lambda/AWSLambda_us-east-1.csv")
+		require.NoError(t, err)
+		defer lambdaF.Close()
+
+		lambdaHTTPClient.EXPECT().Do(gomock.Any()).Return(&http.Response{Body: lambdaF}, nil)
+
+		lambdaBackend := mysql.NewBackend(db)
+		lambdaIngester, err := aws.NewIngester("AWSLambda", "us-east-1", aws.WithHTTPClient(lambdaHTTPClient))
+		require.NoError(t, err)
+
+		err = costestimation.IngestPricing(ctx, lambdaBackend, lambdaIngester)
+		require.NoError(t, err)
+
+		lambdaProds, err := lambdaBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AWSLambda")})
+		require.NoError(t, err)
+		assert.Len(t, lambdaProds, 4)
+
+		for _, prod := range lambdaProds {
+			prices, err := lambdaBackend.Prices().Filter(ctx, prod.ID, nil)
+			require.NoError(t, err)
+			assert.Len(t, prices, 1)
+		}
+	})
 }

@@ -98,6 +98,39 @@ func TestAWSEstimation(t *testing.T) {
 				"VolumeAPIName": "gp2",
 			},
 		},
+		// Lambda products
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-REQUESTS",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "AWS-Lambda-Requests",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-DURATION-X86",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "AWS-Lambda-Duration",
+				"UsageType": "Lambda-GB-Seconds",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-DURATION-ARM",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "AWS-Lambda-Duration",
+				"UsageType": "Lambda-ARM-GB-Seconds",
+			},
+		},
 	}
 
 	for _, p := range prods {
@@ -135,6 +168,40 @@ func TestAWSEstimation(t *testing.T) {
 				Unit:     "GB-Mo",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.45),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		// Lambda prices
+		{
+			Product: prods[3], // Lambda requests
+			Price: price.Price{
+				Unit:     "Requests",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000002),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[4], // Lambda duration x86
+			Price: price.Price{
+				Unit:     "seconds",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000166667),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[5], // Lambda duration ARM
+			Price: price.Price{
+				Unit:     "seconds",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000133334),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -272,6 +339,28 @@ func TestAWSEstimation(t *testing.T) {
 			pcost, err = plan.PlannedCost()
 			assert.NoError(t, err)
 			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(99.798), "USD"), pcost)
+		})
+		t.Run("SuccessLambda", func(t *testing.T) {
+			f, err := os.Open("../testdata/aws/lambda/plan.json")
+			require.NoError(t, err)
+			defer f.Close()
+
+			plan, err := costestimation.EstimateTerraformPlan(ctx, backend, f, usage.Default, terraformAWSTestProviderInitializer)
+			require.NoError(t, err)
+
+			pcost, err := plan.PriorCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
+
+			// basic (x86): requests=$0.20, duration=$0.416667 → $0.616667
+			// arm_large (arm64): requests=$0.20, duration=$38.9998, ephemeral=$6.6667 → $45.8665
+			// Total: ~$46.283
+			pcost, err = plan.PlannedCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(46.283), "USD"), pcost)
+
+			diffs := plan.ResourceDifferences()
+			require.Len(t, diffs, 2)
 		})
 		t.Run("SuccessNoPrior", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/terraform-noprior-plan.json")

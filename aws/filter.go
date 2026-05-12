@@ -36,6 +36,8 @@ func MinimalFilter(pp *price.WithProduct) bool {
 		return true
 	case "AWSELB":
 		return true // is minimal already
+	case "AWSLambda":
+		return true // is minimal already
 	case "awskms":
 		return true // is minimal already
 	case "AWSQueueService":
