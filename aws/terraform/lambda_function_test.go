@@ -46,6 +46,7 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Requests")},
+						{Key: "UsageType", Value: util.StringPtr("Request")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -117,6 +118,7 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Requests")},
+						{Key: "UsageType", Value: util.StringPtr("Request")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -212,6 +214,7 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Requests")},
+						{Key: "UsageType", Value: util.StringPtr("Request")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -303,6 +306,7 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Requests")},
+						{Key: "UsageType", Value: util.StringPtr("Request")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -344,6 +348,7 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Provisioned")},
+						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-Provisioned-GB-Second")},
 					},
 				},
 				PriceFilter: &price.Filter{

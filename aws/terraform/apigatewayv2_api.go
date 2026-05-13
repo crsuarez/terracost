@@ -130,6 +130,8 @@ func (api *Apigatewayv2API) httpRequestsComponent(startingRange string, quantity
 			Location: util.StringPtr(api.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("ApiGatewayHttpRequest")},
+				{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayHttpRequest")},
+				{Key: "Operation", Value: util.StringPtr("ApiGatewayHttpApi")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -153,6 +155,8 @@ func (api *Apigatewayv2API) websocketMessageComponent() query.Component {
 			Location: util.StringPtr(api.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("ApiGatewayWebSocketMessage")},
+				{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayMessage")},
+				{Key: "Operation", Value: util.StringPtr("ApiGatewayWebSocket")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -176,6 +180,7 @@ func (api *Apigatewayv2API) websocketConnectionComponent() query.Component {
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("ApiGatewayWebSocketMessage")},
 				{Key: "UsageType", Value: util.StringPtr("ApiGatewayWebSocket-ConnMinutes")},
+				{Key: "Operation", Value: util.StringPtr("ApiGatewayWebSocket")},
 			},
 		},
 		PriceFilter: &price.Filter{

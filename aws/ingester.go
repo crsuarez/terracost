@@ -193,15 +193,19 @@ func readColumnPositions(values []string) map[string]int {
 // be stored.
 
 var columnProductToIngest = map[field.Field]string{
-	field.CapacityStatus:  "CapacityStatus",
-	field.Group:           "Group",
-	field.InstanceType:    "InstanceType",
-	field.OperatingSystem: "OperatingSystem",
-	field.PreInstalledSW:  "PreInstalledSW",
-	field.Tenancy:         "Tenancy",
-	field.UsageType:       "UsageType",
-	field.VolumeAPIName:   "VolumeAPIName",
-	field.VolumeType:      "VolumeType",
+	field.CapacityStatus:    "CapacityStatus",
+	field.Description:       "Description",
+	field.Group:             "Group",
+	field.GroupDescription:  "GroupDescription",
+	field.InstanceType:      "InstanceType",
+	field.Operation:         "Operation",
+	field.OperatingSystem:   "OperatingSystem",
+	field.PreInstalledSW:    "PreInstalledSW",
+	field.Tenancy:           "Tenancy",
+	field.UsageType:         "UsageType",
+	field.CacheMemorySizeGB: "CacheMemorySizeGB",
+	field.VolumeAPIName:     "VolumeAPIName",
+	field.VolumeType:        "VolumeType",
 
 	// EFS attributes
 	field.StorageClass:    "StorageClass",

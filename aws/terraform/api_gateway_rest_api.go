@@ -176,6 +176,8 @@ func (api *APIGatewayRestAPI) requestsComponent() query.Component {
 			Location: util.StringPtr(api.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("ApiGatewayRequest")},
+				{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayRequest")},
+				{Key: "Operation", Value: util.StringPtr("ApiGatewayRestApi")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -198,6 +200,7 @@ func (api *APIGatewayRestAPI) cacheComponent() query.Component {
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("ApiGatewayCacheUsage")},
 				{Key: "UsageType", Value: util.StringPtr("ApiGatewayCacheUsage")},
+				{Key: "CacheMemorySizeGB", Value: util.StringPtr(api.cacheSizeGB)},
 			},
 		},
 		PriceFilter: &price.Filter{

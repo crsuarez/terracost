@@ -8,19 +8,23 @@ type Field uint8
 // List of fields used by the AWS pricing offer file (CSV).
 const (
 	///// Product Attributes /////
-	SKU             Field = iota // SKU
-	CapacityStatus               // CapacityStatus
-	Group                        // Group
-	InstanceType                 // Instance Type
-	Location                     // Location
-	OperatingSystem              // Operating System
-	PreInstalledSW               // Pre Installed S/W
-	ProductFamily                // Product Family
-	ServiceCode                  // serviceCode
-	Tenancy                      // Tenancy
-	UsageType                    // usageType
-	VolumeAPIName                // Volume API Name
-	VolumeType                   // Volume Type
+	SKU               Field = iota // SKU
+	CapacityStatus                 // CapacityStatus
+	Group                          // Group
+	GroupDescription               // Group Description
+	InstanceType                   // Instance Type
+	Location                       // Location
+	OperatingSystem                // Operating System
+	Operation                      // operation
+	PreInstalledSW                 // Pre Installed S/W
+	ProductFamily                  // Product Family
+	ServiceCode                    // serviceCode
+	Tenancy                        // Tenancy
+	UsageType                      // usageType
+	Description                    // Description
+	CacheMemorySizeGB              // Cache Memory Size (GB)
+	VolumeAPIName                  // Volume API Name
+	VolumeType                     // Volume Type
 
 	// EFSFileSystem
 	StorageClass    // Storage Class

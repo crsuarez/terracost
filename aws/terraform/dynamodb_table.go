@@ -193,6 +193,7 @@ func (dt *DynamoDBTable) readRequestUnitsComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+				{Key: "UsageType", Value: util.StringPtr("ReadRequestUnits")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -216,6 +217,7 @@ func (dt *DynamoDBTable) writeRequestUnitsComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+				{Key: "UsageType", Value: util.StringPtr("WriteRequestUnits")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -238,6 +240,7 @@ func (dt *DynamoDBTable) provisionedReadComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+				{Key: "UsageType", Value: util.StringPtr("ReadCapacityUnit-Hrs")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -260,6 +263,7 @@ func (dt *DynamoDBTable) provisionedWriteComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+				{Key: "UsageType", Value: util.StringPtr("WriteCapacityUnit-Hrs")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -283,6 +287,7 @@ func (dt *DynamoDBTable) storageComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+				{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -354,6 +359,7 @@ func (dt *DynamoDBTable) streamComponent() query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-StreamsEventDataUnits")},
+				{Key: "UsageType", Value: util.StringPtr("DDB-Streams-ReadUnits")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -377,6 +383,7 @@ func (dt *DynamoDBTable) gsiStorageComponent(gsi dynamodbGSI) query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+				{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -399,6 +406,7 @@ func (dt *DynamoDBTable) gsiReadComponent(gsi dynamodbGSI) query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+				{Key: "UsageType", Value: util.StringPtr("ReadCapacityUnit-Hrs")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -421,6 +429,7 @@ func (dt *DynamoDBTable) gsiWriteComponent(gsi dynamodbGSI) query.Component {
 			Location: util.StringPtr(dt.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+				{Key: "UsageType", Value: util.StringPtr("WriteCapacityUnit-Hrs")},
 			},
 		},
 		PriceFilter: &price.Filter{

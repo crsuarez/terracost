@@ -39,8 +39,10 @@ func TestCloudFrontFunction_Components(t *testing.T) {
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
 					Service:  util.StringPtr("AmazonCloudFront"),
+					Family:   util.StringPtr("CloudFront Functions"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("CloudFront-EdgeFunctions")},
+						{Key: "UsageType", Value: util.StringPtr("CloudFront-Function-Invocations")},
 					},
 				},
 				PriceFilter: &price.Filter{

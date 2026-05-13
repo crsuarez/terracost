@@ -78,13 +78,15 @@ func TestAWSIngestion(t *testing.T) {
 
 		lambdaProds, err := lambdaBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AWSLambda")})
 		require.NoError(t, err)
-		assert.Len(t, lambdaProds, 4)
+		assert.Len(t, lambdaProds, 5)
 
 		for _, prod := range lambdaProds {
 			prices, err := lambdaBackend.Prices().Filter(ctx, prod.ID, nil)
 			require.NoError(t, err)
 			assert.Len(t, prices, 1)
 		}
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "GU2ZS9HVP6QTQ7KE", "0.0000002000")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "DECOYLAMBDASAVINGS", "9.9900000000")
 	})
 	t.Run("DynamoDB", func(t *testing.T) {
 		dynCtrl := gomock.NewController(t)
@@ -107,13 +109,15 @@ func TestAWSIngestion(t *testing.T) {
 
 		dynProds, err := dynBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonDynamoDB")})
 		require.NoError(t, err)
-		assert.Len(t, dynProds, 8)
+		assert.Len(t, dynProds, 9)
 
 		for _, prod := range dynProds {
 			prices, err := dynBackend.Prices().Filter(ctx, prod.ID, nil)
 			require.NoError(t, err)
 			assert.Len(t, prices, 1)
 		}
+		assertIngestedSKU(t, ctx, dynBackend, "aws", "4W4ZMC46EHE8XTTZ", "0.0000002500")
+		assertIngestedSKU(t, ctx, dynBackend, "aws", "DECOYDDBRCU", "9.9900000000")
 	})
 	t.Run("APIGateway", func(t *testing.T) {
 		apigwCtrl := gomock.NewController(t)
@@ -136,13 +140,15 @@ func TestAWSIngestion(t *testing.T) {
 
 		apigwProds, err := apigwBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonApiGateway")})
 		require.NoError(t, err)
-		assert.Len(t, apigwProds, 6)
+		assert.Len(t, apigwProds, 7)
 
 		for _, prod := range apigwProds {
 			prices, err := apigwBackend.Prices().Filter(ctx, prod.ID, nil)
 			require.NoError(t, err)
 			assert.Len(t, prices, 1)
 		}
+		assertIngestedSKU(t, ctx, apigwBackend, "aws", "FC2TWT2UEPTBKVBX", "0.0000010000")
+		assertIngestedSKU(t, ctx, apigwBackend, "aws", "DECOYHTTPRESTOP", "9.9900000000")
 	})
 	t.Run("CloudFront", func(t *testing.T) {
 		cfCtrl := gomock.NewController(t)
@@ -165,13 +171,15 @@ func TestAWSIngestion(t *testing.T) {
 
 		cfProds, err := cfBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonCloudFront")})
 		require.NoError(t, err)
-		assert.Len(t, cfProds, 6)
+		assert.Len(t, cfProds, 7)
 
 		for _, prod := range cfProds {
 			prices, err := cfBackend.Prices().Filter(ctx, prod.ID, nil)
 			require.NoError(t, err)
 			assert.Len(t, prices, 1)
 		}
+		assertIngestedSKU(t, ctx, cfBackend, "aws", "CFREQHTTPS001", "0.0100000000")
+		assertIngestedSKU(t, ctx, cfBackend, "aws", "DECOYCFHTTPS", "9.9900000000")
 	})
 	t.Run("Route53", func(t *testing.T) {
 		r53Ctrl := gomock.NewController(t)
@@ -194,12 +202,26 @@ func TestAWSIngestion(t *testing.T) {
 
 		r53Prods, err := r53Backend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonRoute53")})
 		require.NoError(t, err)
-		assert.Len(t, r53Prods, 8)
+		assert.Len(t, r53Prods, 9)
 
 		for _, prod := range r53Prods {
 			prices, err := r53Backend.Prices().Filter(ctx, prod.ID, nil)
 			require.NoError(t, err)
 			assert.Len(t, prices, 1)
 		}
+		assertIngestedSKU(t, ctx, r53Backend, "aws", "STDQTEST001", "0.0000004000")
+		assertIngestedSKU(t, ctx, r53Backend, "aws", "DECOYR53QUERY", "9.9900000000")
 	})
+}
+
+func assertIngestedSKU(t *testing.T, ctx context.Context, backend *mysql.Backend, provider, sku string, wantPrice string) {
+	t.Helper()
+
+	prod, err := backend.Products().FindByVendorAndSKU(ctx, provider, sku)
+	require.NoError(t, err)
+
+	prices, err := backend.Prices().Filter(ctx, prod.ID, nil)
+	require.NoError(t, err)
+	require.Len(t, prices, 1)
+	assert.Equal(t, wantPrice, prices[0].Value.StringFixed(10))
 }

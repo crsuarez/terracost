@@ -43,6 +43,8 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("ApiGatewayRequest")},
+						{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayRequest")},
+						{Key: "Operation", Value: util.StringPtr("ApiGatewayRestApi")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -88,6 +90,8 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("ApiGatewayRequest")},
+						{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayRequest")},
+						{Key: "Operation", Value: util.StringPtr("ApiGatewayRestApi")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -107,6 +111,7 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("ApiGatewayCacheUsage")},
 						{Key: "UsageType", Value: util.StringPtr("ApiGatewayCacheUsage")},
+						{Key: "CacheMemorySizeGB", Value: util.StringPtr("6.1")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -152,6 +157,8 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("ApiGatewayRequest")},
+						{Key: "UsageType", ValueRegex: util.StringPtr(".*ApiGatewayRequest")},
+						{Key: "Operation", Value: util.StringPtr("ApiGatewayRestApi")},
 					},
 				},
 				PriceFilter: &price.Filter{

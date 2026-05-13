@@ -106,7 +106,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "Serverless",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "AWS-Lambda-Requests",
+				"Group":     "AWS-Lambda-Requests",
+				"UsageType": "Request",
 			},
 		},
 		{
@@ -139,7 +140,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-ReadUnits",
+				"Group":     "DDB-ReadUnits",
+				"UsageType": "ReadRequestUnits",
 			},
 		},
 		{
@@ -149,7 +151,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-WriteUnits",
+				"Group":     "DDB-WriteUnits",
+				"UsageType": "WriteRequestUnits",
 			},
 		},
 		{
@@ -159,7 +162,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-StorageUsage",
+				"Group":     "DDB-StorageUsage",
+				"UsageType": "TimedStorage-ByteHrs",
 			},
 		},
 		{
@@ -180,7 +184,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-StreamsEventDataUnits",
+				"Group":     "DDB-StreamsEventDataUnits",
+				"UsageType": "DDB-Streams-ReadUnits",
 			},
 		},
 		{
@@ -190,7 +195,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-ReadUnits",
+				"Group":     "DDB-ReadUnits",
+				"UsageType": "ReadCapacityUnit-Hrs",
 			},
 		},
 		{
@@ -200,7 +206,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonDynamoDB",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "DDB-WriteUnits",
+				"Group":     "DDB-WriteUnits",
+				"UsageType": "WriteCapacityUnit-Hrs",
 			},
 		},
 		// API Gateway products
@@ -211,7 +218,9 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonApiGateway",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "ApiGatewayRequest",
+				"Group":     "ApiGatewayRequest",
+				"UsageType": "USE1-ApiGatewayRequest",
+				"Operation": "ApiGatewayRestApi",
 			},
 		},
 		{
@@ -221,7 +230,9 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonApiGateway",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "ApiGatewayHttpRequest",
+				"Group":     "ApiGatewayHttpRequest",
+				"UsageType": "USE1-ApiGatewayHttpRequest",
+				"Operation": "ApiGatewayHttpApi",
 			},
 		},
 		{
@@ -231,7 +242,9 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "AmazonApiGateway",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group": "ApiGatewayWebSocketMessage",
+				"Group":     "ApiGatewayWebSocketMessage",
+				"UsageType": "USE1-ApiGatewayMessage",
+				"Operation": "ApiGatewayWebSocket",
 			},
 		},
 		// CloudFront products
@@ -282,7 +295,8 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "CloudFront Functions",
 			Location: "North America",
 			Attributes: map[string]string{
-				"Group": "CloudFront-EdgeFunctions",
+				"Group":     "CloudFront-EdgeFunctions",
+				"UsageType": "CloudFront-Function-Invocations",
 			},
 		},
 		// Route 53 products

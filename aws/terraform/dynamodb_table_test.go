@@ -46,6 +46,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -65,6 +66,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -84,6 +86,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -126,6 +129,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -144,6 +148,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -163,6 +168,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -217,6 +223,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -236,6 +243,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -255,6 +263,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -326,6 +335,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -345,6 +355,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteRequestUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -364,6 +375,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -383,6 +395,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StreamsEventDataUnits")},
+						{Key: "UsageType", Value: util.StringPtr("DDB-Streams-ReadUnits")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -440,6 +453,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -458,6 +472,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -477,6 +492,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -496,6 +512,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-StorageUsage")},
+						{Key: "UsageType", Value: util.StringPtr("TimedStorage-ByteHrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -514,6 +531,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-ReadUnits")},
+						{Key: "UsageType", Value: util.StringPtr("ReadCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{
@@ -532,6 +550,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("DDB-WriteUnits")},
+						{Key: "UsageType", Value: util.StringPtr("WriteCapacityUnit-Hrs")},
 					},
 				},
 				PriceFilter: &price.Filter{

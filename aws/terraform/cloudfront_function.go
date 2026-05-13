@@ -71,8 +71,10 @@ func (cf *CloudFrontFunction) invocationsComponent() query.Component {
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(cf.provider.key),
 			Service:  util.StringPtr("AmazonCloudFront"),
+			Family:   util.StringPtr("CloudFront Functions"),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("CloudFront-EdgeFunctions")},
+				{Key: "UsageType", Value: util.StringPtr("CloudFront-Function-Invocations")},
 			},
 		},
 		PriceFilter: &price.Filter{

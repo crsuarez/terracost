@@ -135,6 +135,7 @@ func (lf *LambdaFunction) requestsComponent() query.Component {
 			Location: util.StringPtr(lf.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("AWS-Lambda-Requests")},
+				{Key: "UsageType", Value: util.StringPtr("Request")},
 			},
 		},
 		PriceFilter: &price.Filter{
@@ -235,6 +236,7 @@ func (lf *LambdaFunction) provisionedConcurrencyComponent() (query.Component, bo
 			Location: util.StringPtr(lf.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
 				{Key: "Group", Value: util.StringPtr("AWS-Lambda-Provisioned")},
+				{Key: "UsageType", ValueRegex: util.StringPtr(lf.usageTypeRegex("Provisioned-GB-Second"))},
 			},
 		},
 		PriceFilter: &price.Filter{
