@@ -115,12 +115,16 @@ func (lf *LambdaFunction) Components() []query.Component {
 	return components
 }
 
-// usageTypeRegex returns a regex pattern to match the architecture-specific usage type.
-func (lf *LambdaFunction) usageTypeRegex(suffix string) string {
+// architectureSuffix returns the AWS Lambda pricing suffix used by ARM rows.
+func (lf *LambdaFunction) architectureSuffix() string {
 	if lf.architecture == "arm64" {
-		return ".*Lambda-ARM-" + suffix
+		return "-ARM"
 	}
-	return ".*Lambda-" + suffix
+	return ""
+}
+
+func (lf *LambdaFunction) architectureGroup(base string) string {
+	return base + lf.architectureSuffix()
 }
 
 func (lf *LambdaFunction) requestsComponent() query.Component {
@@ -165,12 +169,12 @@ func (lf *LambdaFunction) durationComponent() query.Component {
 			Family:   util.StringPtr("Serverless"),
 			Location: util.StringPtr(lf.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
-				{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-				{Key: "UsageType", ValueRegex: util.StringPtr(lf.usageTypeRegex("GB-Seconds"))},
+				{Key: "Group", Value: util.StringPtr(lf.architectureGroup("AWS-Lambda-Duration"))},
+				{Key: "UsageType", Value: util.StringPtr("Lambda-GB-Second" + lf.architectureSuffix())},
 			},
 		},
 		PriceFilter: &price.Filter{
-			Unit: util.StringPtr("seconds"),
+			Unit: util.StringPtr("Lambda-GB-Second"),
 			AttributeFilters: []*price.AttributeFilter{
 				{Key: "TermType", Value: util.StringPtr("OnDemand")},
 			},
@@ -202,12 +206,12 @@ func (lf *LambdaFunction) ephemeralStorageComponent() (query.Component, bool) {
 			Family:   util.StringPtr("Serverless"),
 			Location: util.StringPtr(lf.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
-				{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-				{Key: "UsageType", ValueRegex: util.StringPtr(lf.usageTypeRegex("GB-Seconds"))},
+				{Key: "Group", Value: util.StringPtr(lf.architectureGroup("AWS-Lambda-Storage-Duration"))},
+				{Key: "UsageType", Value: util.StringPtr("Lambda-Storage-GB-Second" + lf.architectureSuffix())},
 			},
 		},
 		PriceFilter: &price.Filter{
-			Unit: util.StringPtr("seconds"),
+			Unit: util.StringPtr("GB-Seconds"),
 			AttributeFilters: []*price.AttributeFilter{
 				{Key: "TermType", Value: util.StringPtr("OnDemand")},
 			},
@@ -235,12 +239,12 @@ func (lf *LambdaFunction) provisionedConcurrencyComponent() (query.Component, bo
 			Family:   util.StringPtr("Serverless"),
 			Location: util.StringPtr(lf.region.String()),
 			AttributeFilters: []*product.AttributeFilter{
-				{Key: "Group", Value: util.StringPtr("AWS-Lambda-Provisioned")},
-				{Key: "UsageType", ValueRegex: util.StringPtr(lf.usageTypeRegex("Provisioned-GB-Second"))},
+				{Key: "Group", Value: util.StringPtr(lf.architectureGroup("AWS-Lambda-Provisioned-Concurrency"))},
+				{Key: "UsageType", Value: util.StringPtr("Lambda-Provisioned-Concurrency" + lf.architectureSuffix())},
 			},
 		},
 		PriceFilter: &price.Filter{
-			Unit: util.StringPtr("seconds"),
+			Unit: util.StringPtr("Lambda-GB-Second"),
 			AttributeFilters: []*price.AttributeFilter{
 				{Key: "TermType", Value: util.StringPtr("OnDemand")},
 			},

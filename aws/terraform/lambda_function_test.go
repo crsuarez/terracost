@@ -1,12 +1,16 @@
 package terraform_test
 
 import (
+	"context"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 
 	awstf "github.com/cycloidio/terracost/aws/terraform"
+	"github.com/cycloidio/terracost/cost"
+	"github.com/cycloidio/terracost/mock"
 	"github.com/cycloidio/terracost/price"
 	"github.com/cycloidio/terracost/product"
 	"github.com/cycloidio/terracost/query"
@@ -67,11 +71,11 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-GB-Seconds")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-GB-Second")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("Lambda-GB-Second"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -138,12 +142,12 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Family:   util.StringPtr("Serverless"),
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
-						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-ARM-GB-Seconds")},
+						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration-ARM")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-GB-Second-ARM")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("Lambda-GB-Second"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -159,12 +163,12 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Family:   util.StringPtr("Serverless"),
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
-						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-ARM-GB-Seconds")},
+						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Storage-Duration-ARM")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-Storage-GB-Second-ARM")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("GB-Seconds"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -235,11 +239,11 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-GB-Seconds")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-GB-Second")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("Lambda-GB-Second"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -255,12 +259,12 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Family:   util.StringPtr("Serverless"),
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
-						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-GB-Seconds")},
+						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Storage-Duration")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-Storage-GB-Second")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("GB-Seconds"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -327,11 +331,11 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
 						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Duration")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-GB-Seconds")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-GB-Second")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("Lambda-GB-Second"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -347,12 +351,12 @@ func TestLambdaFunction_Components(t *testing.T) {
 					Family:   util.StringPtr("Serverless"),
 					Location: util.StringPtr("us-east-1"),
 					AttributeFilters: []*product.AttributeFilter{
-						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Provisioned")},
-						{Key: "UsageType", ValueRegex: util.StringPtr(".*Lambda-Provisioned-GB-Second")},
+						{Key: "Group", Value: util.StringPtr("AWS-Lambda-Provisioned-Concurrency")},
+						{Key: "UsageType", Value: util.StringPtr("Lambda-Provisioned-Concurrency")},
 					},
 				},
 				PriceFilter: &price.Filter{
-					Unit: util.StringPtr("seconds"),
+					Unit: util.StringPtr("Lambda-GB-Second"),
 					AttributeFilters: []*price.AttributeFilter{
 						{Key: "TermType", Value: util.StringPtr("OnDemand")},
 					},
@@ -369,4 +373,55 @@ func TestLambdaFunction_Components(t *testing.T) {
 		actual := p.ResourceComponents(rss, tfres)
 		testutil.EqualQueryComponents(t, expected, actual)
 	})
+}
+
+func TestLambdaFunction_EphemeralStorageRequiresDedicatedSKU(t *testing.T) {
+	ctx := context.Background()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	p, err := awstf.NewProvider("aws", "us-east-1")
+	require.NoError(t, err)
+
+	tfres := terraform.Resource{
+		Address:      "aws_lambda_function.test",
+		Type:         "aws_lambda_function",
+		Name:         "test",
+		ProviderName: "aws",
+		Values: map[string]interface{}{
+			"ephemeral_storage": []map[string]interface{}{
+				{"size": 1024},
+			},
+			usage.Key: map[string]interface{}{
+				"monthly_requests":                        1000000.0,
+				"request_duration_ms":                     200.0,
+				"monthly_provisioned_concurrency_seconds": 0.0,
+			},
+		},
+	}
+	components := p.ResourceComponents(nil, tfres)
+	require.Len(t, components, 3)
+
+	productRepo := mock.NewProductRepository(ctrl)
+	priceRepo := mock.NewPriceRepository(ctrl)
+	backend := mock.NewBackend(ctrl)
+	backend.EXPECT().Products().AnyTimes().Return(productRepo)
+	backend.EXPECT().Prices().AnyTimes().Return(priceRepo)
+
+	requestsProduct := &product.Product{ID: product.ID(1)}
+	durationProduct := &product.Product{ID: product.ID(2)}
+	productRepo.EXPECT().Filter(ctx, components[0].ProductFilter).Return([]*product.Product{requestsProduct}, nil)
+	priceRepo.EXPECT().Filter(ctx, requestsProduct.ID, components[0].PriceFilter).Return([]*price.Price{{Unit: "Requests", Currency: "USD", Value: decimal.NewFromFloat(0.0000002)}}, nil)
+	productRepo.EXPECT().Filter(ctx, components[1].ProductFilter).Return([]*product.Product{durationProduct}, nil)
+	priceRepo.EXPECT().Filter(ctx, durationProduct.ID, components[1].PriceFilter).Return([]*price.Price{{Unit: "Lambda-GB-Second", Currency: "USD", Value: decimal.NewFromFloat(0.0000166667)}}, nil)
+	productRepo.EXPECT().Filter(ctx, components[2].ProductFilter).Return(nil, nil)
+
+	state, err := cost.NewState(ctx, backend, []query.Resource{{
+		Address:    tfres.Address,
+		Provider:   p.Name(),
+		Type:       tfres.Type,
+		Components: components,
+	}})
+	require.NoError(t, err)
+	require.Equal(t, cost.ErrProductNotFound, state.Resources[tfres.Address].Components["Ephemeral storage"].Error)
 }

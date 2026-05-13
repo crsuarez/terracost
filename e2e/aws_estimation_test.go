@@ -17,6 +17,7 @@ import (
 	"github.com/cycloidio/terracost/mysql"
 	"github.com/cycloidio/terracost/price"
 	"github.com/cycloidio/terracost/product"
+	"github.com/cycloidio/terracost/query"
 	"github.com/cycloidio/terracost/terraform"
 	"github.com/cycloidio/terracost/usage"
 	"github.com/shopspring/decimal"
@@ -128,8 +129,41 @@ func TestAWSEstimation(t *testing.T) {
 			Family:   "Serverless",
 			Location: "us-east-1",
 			Attributes: map[string]string{
-				"Group":     "AWS-Lambda-Duration",
-				"UsageType": "Lambda-ARM-GB-Seconds",
+				"Group":     "AWS-Lambda-Duration-ARM",
+				"UsageType": "Lambda-GB-Second-ARM",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-EPHEMERAL-X86",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "AWS-Lambda-Storage-Duration",
+				"UsageType": "Lambda-Storage-GB-Second",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-EPHEMERAL-ARM",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "AWS-Lambda-Storage-Duration-ARM",
+				"UsageType": "Lambda-Storage-GB-Second-ARM",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-LAMBDA-PROVISIONED-X86",
+			Service:  "AWSLambda",
+			Family:   "Serverless",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "AWS-Lambda-Provisioned-Concurrency",
+				"UsageType": "Lambda-Provisioned-Concurrency",
 			},
 		},
 		// DynamoDB products
@@ -431,7 +465,7 @@ func TestAWSEstimation(t *testing.T) {
 		{
 			Product: prods[4], // Lambda duration x86
 			Price: price.Price{
-				Unit:     "seconds",
+				Unit:     "Lambda-GB-Second",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.0000166667),
 				Attributes: map[string]string{
@@ -442,7 +476,7 @@ func TestAWSEstimation(t *testing.T) {
 		{
 			Product: prods[5], // Lambda duration ARM
 			Price: price.Price{
-				Unit:     "seconds",
+				Unit:     "Lambda-GB-Second",
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.0000133334),
 				Attributes: map[string]string{
@@ -450,9 +484,42 @@ func TestAWSEstimation(t *testing.T) {
 				},
 			},
 		},
+		{
+			Product: prods[6], // Lambda ephemeral x86
+			Price: price.Price{
+				Unit:     "GB-Seconds",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000000309),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[7], // Lambda ephemeral ARM
+			Price: price.Price{
+				Unit:     "GB-Seconds",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000000309),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[8], // Lambda provisioned concurrency x86
+			Price: price.Price{
+				Unit:     "Lambda-GB-Second",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.0000041667),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
 		// DynamoDB prices
 		{
-			Product: prods[6], // DDB on-demand read
+			Product: prods[9], // DDB on-demand read
 			Price: price.Price{
 				Unit:     "ReadRequestUnit",
 				Currency: "USD",
@@ -463,7 +530,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[7], // DDB on-demand write
+			Product: prods[10], // DDB on-demand write
 			Price: price.Price{
 				Unit:     "WriteRequestUnit",
 				Currency: "USD",
@@ -474,7 +541,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[8], // DDB storage
+			Product: prods[11], // DDB storage
 			Price: price.Price{
 				Unit:     "GB-Mo",
 				Currency: "USD",
@@ -485,7 +552,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[9], // DDB PITR
+			Product: prods[12], // DDB PITR
 			Price: price.Price{
 				Unit:     "GB-Mo",
 				Currency: "USD",
@@ -496,7 +563,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[10], // DDB stream
+			Product: prods[13], // DDB stream
 			Price: price.Price{
 				Unit:     "ReadRequestUnit",
 				Currency: "USD",
@@ -507,7 +574,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[11], // DDB provisioned RCU
+			Product: prods[14], // DDB provisioned RCU
 			Price: price.Price{
 				Unit:     "ReadCapacityUnit-Hrs",
 				Currency: "USD",
@@ -518,7 +585,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[12], // DDB provisioned WCU
+			Product: prods[15], // DDB provisioned WCU
 			Price: price.Price{
 				Unit:     "WriteCapacityUnit-Hrs",
 				Currency: "USD",
@@ -530,7 +597,7 @@ func TestAWSEstimation(t *testing.T) {
 		},
 		// API Gateway prices
 		{
-			Product: prods[13], // REST API requests
+			Product: prods[16], // REST API requests
 			Price: price.Price{
 				Unit:     "Requests",
 				Currency: "USD",
@@ -541,7 +608,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[14], // HTTP API requests (tier 1)
+			Product: prods[17], // HTTP API requests (tier 1)
 			Price: price.Price{
 				Unit:     "Requests",
 				Currency: "USD",
@@ -553,7 +620,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[15], // WebSocket messages
+			Product: prods[18], // WebSocket messages
 			Price: price.Price{
 				Unit:     "Messages",
 				Currency: "USD",
@@ -565,7 +632,7 @@ func TestAWSEstimation(t *testing.T) {
 		},
 		// CloudFront prices
 		{
-			Product: prods[16], // CF data transfer NA
+			Product: prods[19], // CF data transfer NA
 			Price: price.Price{
 				Unit:     "GB",
 				Currency: "USD",
@@ -576,7 +643,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[17], // CF data transfer EU
+			Product: prods[20], // CF data transfer EU
 			Price: price.Price{
 				Unit:     "GB",
 				Currency: "USD",
@@ -587,7 +654,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[18], // CF HTTPS requests
+			Product: prods[21], // CF HTTPS requests
 			Price: price.Price{
 				Unit:     "10k requests",
 				Currency: "USD",
@@ -598,7 +665,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[19], // CF invalidation
+			Product: prods[22], // CF invalidation
 			Price: price.Price{
 				Unit:     "requests",
 				Currency: "USD",
@@ -609,7 +676,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[20], // CF function invocations
+			Product: prods[23], // CF function invocations
 			Price: price.Price{
 				Unit:     "Requests",
 				Currency: "USD",
@@ -621,7 +688,7 @@ func TestAWSEstimation(t *testing.T) {
 		},
 		// Route 53 prices
 		{
-			Product: prods[21], // R53 hosted zone
+			Product: prods[24], // R53 hosted zone
 			Price: price.Price{
 				Unit:     "zones",
 				Currency: "USD",
@@ -632,7 +699,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[22], // R53 standard queries
+			Product: prods[25], // R53 standard queries
 			Price: price.Price{
 				Unit:     "Queries",
 				Currency: "USD",
@@ -643,7 +710,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[23], // R53 latency queries
+			Product: prods[26], // R53 latency queries
 			Price: price.Price{
 				Unit:     "Queries",
 				Currency: "USD",
@@ -654,7 +721,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[24], // R53 basic health check
+			Product: prods[27], // R53 basic health check
 			Price: price.Price{
 				Unit:     "HealthCheck",
 				Currency: "USD",
@@ -665,7 +732,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[25], // R53 custom health check
+			Product: prods[28], // R53 custom health check
 			Price: price.Price{
 				Unit:     "HealthCheck",
 				Currency: "USD",
@@ -676,7 +743,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[26], // R53 health check string matching feature
+			Product: prods[29], // R53 health check string matching feature
 			Price: price.Price{
 				Unit:     "HealthCheck",
 				Currency: "USD",
@@ -687,7 +754,7 @@ func TestAWSEstimation(t *testing.T) {
 			},
 		},
 		{
-			Product: prods[27], // R53 health check latency measurement feature
+			Product: prods[30], // R53 health check latency measurement feature
 			Price: price.Price{
 				Unit:     "HealthCheck",
 				Currency: "USD",
@@ -842,15 +909,46 @@ func TestAWSEstimation(t *testing.T) {
 			assert.NoError(t, err)
 			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
 
-			// basic (x86): requests=$0.20, duration=$0.416667 → $0.616667
-			// arm_large (arm64): requests=$0.20, duration=$38.9998, ephemeral=$6.6667 → $45.8665
-			// Total: ~$46.483
+			// basic (x86): requests=$0.20, duration=$0.416667 -> $0.616667
+			// arm_large (arm64): requests=$0.20, duration=$7.8334, ephemeral=$0.0031 -> $8.0365
+			// Total: ~$8.653
 			pcost, err = plan.PlannedCost()
 			assert.NoError(t, err)
-			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(46.483), "USD"), pcost)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(8.653), "USD"), pcost)
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 2)
+		})
+		t.Run("SuccessLambdaProvisionedConcurrency", func(t *testing.T) {
+			p, err := awstf.NewProvider("aws-test", "us-east-1")
+			require.NoError(t, err)
+
+			tfres := terraform.Resource{
+				Address:      "aws_lambda_function.provisioned",
+				Type:         "aws_lambda_function",
+				Name:         "provisioned",
+				ProviderName: "aws-test",
+				Values: map[string]interface{}{
+					"memory_size": 512,
+					usage.Key: map[string]interface{}{
+						"monthly_requests":                        1000000.0,
+						"request_duration_ms":                     200.0,
+						"monthly_provisioned_concurrency_seconds": 10000000.0,
+					},
+				},
+			}
+
+			state, err := cost.NewState(ctx, backend, []query.Resource{{
+				Address:    tfres.Address,
+				Provider:   p.Name(),
+				Type:       tfres.Type,
+				Components: p.ResourceComponents(nil, tfres),
+			}})
+			require.NoError(t, err)
+
+			stateCost, err := state.Cost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(22.7), "USD"), stateCost)
 		})
 		t.Run("SuccessDynamoDB", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/dynamodb/plan.json")

@@ -62,6 +62,23 @@ done
 * [`aws_secretsmanager_secret`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret)
 * [`aws_sqs_queue`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue)
 
+## AWS Lambda
+
+[`aws_lambda_function`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) estimates these OnDemand dimensions:
+
+* Requests, using raw request counts from `tc_usage.monthly_requests` and AWS `Unit=Requests` rows.
+* Duration, using `memory_size`, `tc_usage.monthly_requests`, and `tc_usage.request_duration_ms` to calculate Lambda GB-seconds.
+* Ephemeral storage above the included 512 MB, using dedicated `AWS-Lambda-Storage-Duration` pricing rows.
+* Provisioned concurrency, using `tc_usage.monthly_provisioned_concurrency_seconds` and dedicated `AWS-Lambda-Provisioned-Concurrency` pricing rows.
+
+Supported `tc_usage` keys:
+
+* `monthly_requests`: raw monthly invocation count.
+* `request_duration_ms`: average request duration in milliseconds.
+* `monthly_provisioned_concurrency_seconds`: provisioned concurrency seconds for the month.
+
+Lambda duration, ephemeral storage, and provisioned concurrency filters are architecture-aware for `x86_64` and `arm64`. Free tier, tiered GB-second rates above the first tier, Lambda@Edge, SnapStart, and Lambda managed instances are not modeled.
+
 ## List of identified resources with zero cost or no estimation.
 * [`aws_db_subnet_group`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group)
 * [`aws_elasticache_subnet_group`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_subnet_group)

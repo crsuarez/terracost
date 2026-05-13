@@ -78,7 +78,7 @@ func TestAWSIngestion(t *testing.T) {
 
 		lambdaProds, err := lambdaBackend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AWSLambda")})
 		require.NoError(t, err)
-		assert.Len(t, lambdaProds, 5)
+		assert.Len(t, lambdaProds, 9)
 
 		for _, prod := range lambdaProds {
 			prices, err := lambdaBackend.Prices().Filter(ctx, prod.ID, nil)
@@ -87,6 +87,11 @@ func TestAWSIngestion(t *testing.T) {
 		}
 		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "GU2ZS9HVP6QTQ7KE", "0.0000002000")
 		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "DECOYLAMBDASAVINGS", "9.9900000000")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "DECOYLAMBDAEPHEMERAL", "0.0000166667")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "CVY5JH8RFRXMP92N", "0.0000000309")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "CH6HMM86MH4K8KCS", "0.0000000309")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "BMKCD2ZCEYKTYYCB", "0.0000041667")
+		assertIngestedSKU(t, ctx, lambdaBackend, "aws", "MV7PTBS82AVCMXJJ", "0.0000033334")
 	})
 	t.Run("DynamoDB", func(t *testing.T) {
 		dynCtrl := gomock.NewController(t)
