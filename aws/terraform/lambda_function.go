@@ -13,13 +13,12 @@ import (
 )
 
 var (
-	lambdaDefaultMemorySize        = decimal.NewFromInt(128)
-	lambdaDefaultEphemeralStorage  = decimal.NewFromInt(512)
-	lambdaEphemeralStorageFree     = decimal.NewFromInt(512)
-	megabytesPerGigabyte           = decimal.NewFromInt(1024)
-	msPerSecond                    = decimal.NewFromInt(1000)
-	invocationsPerMillion          = decimal.NewFromInt(1_000_000)
-	secondsPerMonth                = decimal.NewFromInt(2_678_400) // 31 days
+	lambdaDefaultMemorySize       = decimal.NewFromInt(128)
+	lambdaDefaultEphemeralStorage = decimal.NewFromInt(512)
+	lambdaEphemeralStorageFree    = decimal.NewFromInt(512)
+	megabytesPerGigabyte          = decimal.NewFromInt(1024)
+	msPerSecond                   = decimal.NewFromInt(1000)
+	secondsPerMonth               = decimal.NewFromInt(2_678_400) // 31 days
 )
 
 // LambdaFunction represents an aws_lambda_function for cost estimation.
@@ -27,9 +26,9 @@ type LambdaFunction struct {
 	provider *Provider
 	region   region.Code
 
-	architecture        string // "x86_64" or "arm64"
-	memorySizeMB        decimal.Decimal
-	ephemeralStorageMB  decimal.Decimal
+	architecture       string // "x86_64" or "arm64"
+	memorySizeMB       decimal.Decimal
+	ephemeralStorageMB decimal.Decimal
 
 	// Usage (from tc_usage)
 	monthlyRequests                      decimal.Decimal
@@ -45,8 +44,8 @@ type lambdaFunctionValues struct {
 	} `mapstructure:"ephemeral_storage"`
 
 	Usage struct {
-		MonthlyRequests                     float64 `mapstructure:"monthly_requests"`
-		RequestDurationMs                   float64 `mapstructure:"request_duration_ms"`
+		MonthlyRequests                      float64 `mapstructure:"monthly_requests"`
+		RequestDurationMs                    float64 `mapstructure:"request_duration_ms"`
 		MonthlyProvisionedConcurrencySeconds float64 `mapstructure:"monthly_provisioned_concurrency_seconds"`
 	} `mapstructure:"tc_usage"`
 }
@@ -73,11 +72,11 @@ func decodeLambdaFunctionValues(tfVals map[string]interface{}) (lambdaFunctionVa
 // newLambdaFunction creates a new LambdaFunction from lambdaFunctionValues.
 func (p *Provider) newLambdaFunction(_ map[string]terraform.Resource, vals lambdaFunctionValues) *LambdaFunction {
 	lf := &LambdaFunction{
-		provider:            p,
-		region:              p.region,
-		architecture:        "x86_64",
-		memorySizeMB:        lambdaDefaultMemorySize,
-		ephemeralStorageMB:  lambdaDefaultEphemeralStorage,
+		provider:                             p,
+		region:                               p.region,
+		architecture:                         "x86_64",
+		memorySizeMB:                         lambdaDefaultMemorySize,
+		ephemeralStorageMB:                   lambdaDefaultEphemeralStorage,
 		monthlyRequests:                      decimal.NewFromFloat(vals.Usage.MonthlyRequests),
 		requestDurationMs:                    decimal.NewFromFloat(vals.Usage.RequestDurationMs),
 		monthlyProvisionedConcurrencySeconds: decimal.NewFromFloat(vals.Usage.MonthlyProvisionedConcurrencySeconds),
@@ -127,7 +126,7 @@ func (lf *LambdaFunction) usageTypeRegex(suffix string) string {
 func (lf *LambdaFunction) requestsComponent() query.Component {
 	return query.Component{
 		Name:            "Requests",
-		MonthlyQuantity: lf.monthlyRequests.Div(invocationsPerMillion),
+		MonthlyQuantity: lf.monthlyRequests,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(lf.provider.key),

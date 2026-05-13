@@ -41,28 +41,28 @@ type DynamoDBTable struct {
 
 // dynamodbGSI represents a Global Secondary Index on a DynamoDB table.
 type dynamodbGSI struct {
-	name         string
+	name          string
 	readCapacity  decimal.Decimal
 	writeCapacity decimal.Decimal
 	storageGB     decimal.Decimal
 }
 
 type dynamodbTableValues struct {
-	BillingMode string `mapstructure:"billing_mode"`
-	ReadCapacity  int64 `mapstructure:"read_capacity"`
-	WriteCapacity int64 `mapstructure:"write_capacity"`
+	BillingMode   string `mapstructure:"billing_mode"`
+	ReadCapacity  int64  `mapstructure:"read_capacity"`
+	WriteCapacity int64  `mapstructure:"write_capacity"`
 
 	PointInTimeRecovery []struct {
 		Enabled bool `mapstructure:"enabled"`
 	} `mapstructure:"point_in_time_recovery"`
 
-	StreamEnabled   bool   `mapstructure:"stream_enabled"`
-	StreamViewType  string `mapstructure:"stream_view_type"`
+	StreamEnabled  bool   `mapstructure:"stream_enabled"`
+	StreamViewType string `mapstructure:"stream_view_type"`
 
 	GlobalSecondaryIndex []struct {
-		Name         string `mapstructure:"name"`
-		ReadCapacity  int64 `mapstructure:"read_capacity"`
-		WriteCapacity int64 `mapstructure:"write_capacity"`
+		Name          string `mapstructure:"name"`
+		ReadCapacity  int64  `mapstructure:"read_capacity"`
+		WriteCapacity int64  `mapstructure:"write_capacity"`
 	} `mapstructure:"global_secondary_index"`
 
 	Usage struct {
@@ -185,7 +185,7 @@ func (dt *DynamoDBTable) Components() []query.Component {
 func (dt *DynamoDBTable) readRequestUnitsComponent() query.Component {
 	return query.Component{
 		Name:            "Read request units (on-demand)",
-		MonthlyQuantity: dt.monthlyReadRequestUnits.Div(invocationsPerMillion),
+		MonthlyQuantity: dt.monthlyReadRequestUnits,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(dt.provider.key),
@@ -208,7 +208,7 @@ func (dt *DynamoDBTable) readRequestUnitsComponent() query.Component {
 func (dt *DynamoDBTable) writeRequestUnitsComponent() query.Component {
 	return query.Component{
 		Name:            "Write request units (on-demand)",
-		MonthlyQuantity: dt.monthlyWriteRequestUnits.Div(invocationsPerMillion),
+		MonthlyQuantity: dt.monthlyWriteRequestUnits,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(dt.provider.key),
@@ -230,8 +230,8 @@ func (dt *DynamoDBTable) writeRequestUnitsComponent() query.Component {
 // provisionedReadComponent returns the provisioned read capacity component.
 func (dt *DynamoDBTable) provisionedReadComponent() query.Component {
 	return query.Component{
-		Name:            "Read capacity units (provisioned)",
-		HourlyQuantity:  dt.readCapacity,
+		Name:           "Read capacity units (provisioned)",
+		HourlyQuantity: dt.readCapacity,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(dt.provider.key),
 			Service:  util.StringPtr("AmazonDynamoDB"),
@@ -252,8 +252,8 @@ func (dt *DynamoDBTable) provisionedReadComponent() query.Component {
 // provisionedWriteComponent returns the provisioned write capacity component.
 func (dt *DynamoDBTable) provisionedWriteComponent() query.Component {
 	return query.Component{
-		Name:            "Write capacity units (provisioned)",
-		HourlyQuantity:  dt.writeCapacity,
+		Name:           "Write capacity units (provisioned)",
+		HourlyQuantity: dt.writeCapacity,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(dt.provider.key),
 			Service:  util.StringPtr("AmazonDynamoDB"),
@@ -346,7 +346,7 @@ func (dt *DynamoDBTable) onDemandBackupComponent() query.Component {
 func (dt *DynamoDBTable) streamComponent() query.Component {
 	return query.Component{
 		Name:            "Stream read request units",
-		MonthlyQuantity: dt.monthlyStreamReads.Div(invocationsPerMillion),
+		MonthlyQuantity: dt.monthlyStreamReads,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(dt.provider.key),

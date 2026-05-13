@@ -34,12 +34,11 @@ func TestDynamoDBTable_Components(t *testing.T) {
 		rss := map[string]terraform.Resource{}
 
 		// Default usage: 1M reads, 200K writes, 50 GB storage, 50 GB PITR
-		// Read RU: 1_000_000 / 1_000_000 = 1
-		// Write RU: 200_000 / 1_000_000 = 0.2
+		// Read/write request units use raw AWS PricePerUnit quantities.
 		expected := []query.Component{
 			{
 				Name:            "Read request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -58,7 +57,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 			},
 			{
 				Name:            "Write request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromFloat(0.2),
+				MonthlyQuantity: decimal.NewFromInt(200000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -210,7 +209,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 		expected := []query.Component{
 			{
 				Name:            "Read request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -229,7 +228,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 			},
 			{
 				Name:            "Write request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromFloat(0.2),
+				MonthlyQuantity: decimal.NewFromInt(200000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -298,9 +297,9 @@ func TestDynamoDBTable_Components(t *testing.T) {
 			Name:         "test",
 			ProviderName: "aws",
 			Values: map[string]interface{}{
-				"billing_mode":    "PAY_PER_REQUEST",
-				"name":            "test-table",
-				"stream_enabled":  true,
+				"billing_mode":     "PAY_PER_REQUEST",
+				"name":             "test-table",
+				"stream_enabled":   true,
 				"stream_view_type": "NEW_AND_OLD_IMAGES",
 			},
 		}
@@ -319,7 +318,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 		expected := []query.Component{
 			{
 				Name:            "Read request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -338,7 +337,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 			},
 			{
 				Name:            "Write request units (on-demand)",
-				MonthlyQuantity: decimal.NewFromFloat(0.2),
+				MonthlyQuantity: decimal.NewFromInt(200000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -376,7 +375,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 			},
 			{
 				Name:            "Stream read request units",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -412,7 +411,7 @@ func TestDynamoDBTable_Components(t *testing.T) {
 				"name":           "test-table",
 				"global_secondary_index": []map[string]interface{}{
 					{
-						"name":          "gsi1",
+						"name":           "gsi1",
 						"read_capacity":  5,
 						"write_capacity": 5,
 					},

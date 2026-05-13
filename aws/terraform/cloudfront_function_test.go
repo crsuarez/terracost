@@ -30,11 +30,11 @@ func TestCloudFrontFunction_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 2M invocations / 1M = 2
+		// Invocations use the raw AWS PricePerUnit quantity.
 		expected := []query.Component{
 			{
 				Name:            "Invocations",
-				MonthlyQuantity: decimal.NewFromInt(2),
+				MonthlyQuantity: decimal.NewFromInt(2000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),

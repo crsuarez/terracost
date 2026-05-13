@@ -33,11 +33,11 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 100M requests / 1M = 100
+		// Requests use raw AWS PricePerUnit quantities.
 		expected := []query.Component{
 			{
 				Name:            "HTTP API requests",
-				MonthlyQuantity: decimal.NewFromInt(100),
+				MonthlyQuantity: decimal.NewFromInt(100000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -58,8 +58,8 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":        100000000.0,
-			"monthly_message_count":   0.0,
+			"monthly_requests":           100000000.0,
+			"monthly_message_count":      0.0,
 			"monthly_connection_minutes": 0.0,
 		}
 		tfres.Values[usage.Key] = us
@@ -80,12 +80,11 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// First 300M at tier 0: 300M / 1M = 300
-		// Remaining 100M at tier 1: 100M / 1M = 100
+		// First 300M at tier 0, remaining 100M at tier 1.
 		expected := []query.Component{
 			{
 				Name:            "HTTP API requests",
-				MonthlyQuantity: decimal.NewFromInt(300),
+				MonthlyQuantity: decimal.NewFromInt(300000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -105,7 +104,7 @@ func TestApigatewayv2API_Components(t *testing.T) {
 			},
 			{
 				Name:            "HTTP API requests",
-				MonthlyQuantity: decimal.NewFromInt(100),
+				MonthlyQuantity: decimal.NewFromInt(100000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -126,8 +125,8 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":        400000000.0,
-			"monthly_message_count":   0.0,
+			"monthly_requests":           400000000.0,
+			"monthly_message_count":      0.0,
 			"monthly_connection_minutes": 0.0,
 		}
 		tfres.Values[usage.Key] = us
@@ -148,12 +147,12 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// Messages: 1M / 1M = 1
+		// Messages use raw AWS PricePerUnit quantities.
 		// Connection minutes: 10000
 		expected := []query.Component{
 			{
 				Name:            "WebSocket messages",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -193,8 +192,8 @@ func TestApigatewayv2API_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":        0.0,
-			"monthly_message_count":   1000000.0,
+			"monthly_requests":           0.0,
+			"monthly_message_count":      1000000.0,
 			"monthly_connection_minutes": 10000.0,
 		}
 		tfres.Values[usage.Key] = us

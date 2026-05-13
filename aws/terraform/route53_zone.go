@@ -12,9 +12,6 @@ import (
 	"github.com/cycloidio/terracost/util"
 )
 
-// queriesPerMillion is the divisor for converting raw query counts to millions.
-var queriesPerMillion = decimal.NewFromInt(1_000_000)
-
 // Route53Zone represents an aws_route53_zone for cost estimation.
 //
 // Pricing dimensions (per AWS Route 53 pricing page):
@@ -127,7 +124,7 @@ func (z *Route53Zone) hostedZoneComponent() query.Component {
 func (z *Route53Zone) standardQueriesComponent() query.Component {
 	return query.Component{
 		Name:            "Standard queries",
-		MonthlyQuantity: z.monthlyStandardQueries.Div(queriesPerMillion),
+		MonthlyQuantity: z.monthlyStandardQueries,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(z.provider.key),
@@ -152,7 +149,7 @@ func (z *Route53Zone) standardQueriesComponent() query.Component {
 func (z *Route53Zone) latencyQueriesComponent() query.Component {
 	return query.Component{
 		Name:            "Latency-based queries",
-		MonthlyQuantity: z.monthlyLatencyQueries.Div(queriesPerMillion),
+		MonthlyQuantity: z.monthlyLatencyQueries,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(z.provider.key),
@@ -177,7 +174,7 @@ func (z *Route53Zone) latencyQueriesComponent() query.Component {
 func (z *Route53Zone) geoQueriesComponent() query.Component {
 	return query.Component{
 		Name:            "Geo queries",
-		MonthlyQuantity: z.monthlyGeoQueries.Div(queriesPerMillion),
+		MonthlyQuantity: z.monthlyGeoQueries,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(z.provider.key),

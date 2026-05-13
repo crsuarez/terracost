@@ -54,7 +54,7 @@ func TestAWSEstimation(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	db, err := sql.Open("mysql", "root:terracost@tcp(172.44.0.2:3306)/terracost_test?multiStatements=true")
+	db, err := sql.Open("mysql", testDSN())
 	require.NoError(t, err)
 
 	backend := mysql.NewBackend(db)
@@ -533,7 +533,7 @@ func TestAWSEstimation(t *testing.T) {
 				Currency: "USD",
 				Value:    decimal.NewFromFloat(0.000001),
 				Attributes: map[string]string{
-					"TermType":    "OnDemand",
+					"TermType":      "OnDemand",
 					"StartingRange": "0",
 				},
 			},
@@ -622,7 +622,7 @@ func TestAWSEstimation(t *testing.T) {
 			Price: price.Price{
 				Unit:     "Queries",
 				Currency: "USD",
-				Value:    decimal.NewFromFloat(0.40),
+				Value:    decimal.NewFromFloat(0.0000004),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -633,7 +633,7 @@ func TestAWSEstimation(t *testing.T) {
 			Price: price.Price{
 				Unit:     "Queries",
 				Currency: "USD",
-				Value:    decimal.NewFromFloat(0.60),
+				Value:    decimal.NewFromFloat(0.0000006),
 				Attributes: map[string]string{
 					"TermType": "OnDemand",
 				},
@@ -830,10 +830,10 @@ func TestAWSEstimation(t *testing.T) {
 
 			// basic (x86): requests=$0.20, duration=$0.416667 → $0.616667
 			// arm_large (arm64): requests=$0.20, duration=$38.9998, ephemeral=$6.6667 → $45.8665
-			// Total: ~$46.283
+			// Total: ~$46.483
 			pcost, err = plan.PlannedCost()
 			assert.NoError(t, err)
-			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(46.283), "USD"), pcost)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(46.483), "USD"), pcost)
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 2)
@@ -853,11 +853,11 @@ func TestAWSEstimation(t *testing.T) {
 			// on-demand: read=$0.25, write=$0.25, storage=$12.50 → $13.00
 			// provisioned: RCU=$1.0147, WCU=$2.5331, storage=$12.50 → $16.0478
 			// with_pitr: read=$0.25, write=$0.25, storage=$12.50, PITR=$10.00 → $23.00
-			// with_stream: read=$0.25, write=$0.25, storage=$12.50, stream=$0.0 → $13.00
-			// Total: ~$65.048
+			// with_stream: read=$0.25, write=$0.25, storage=$12.50, stream=$0.02 → $13.02
+			// Total: ~$65.068
 			pcost, err = plan.PlannedCost()
 			assert.NoError(t, err)
-			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(65.048), "USD"), pcost)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(65.068), "USD"), pcost)
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 4)
@@ -874,9 +874,9 @@ func TestAWSEstimation(t *testing.T) {
 			assert.NoError(t, err)
 			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
 
-			// rest_api: 5M requests * $3.50/M = $17.50
-			// http_api: 5M requests * $1.00/M = $5.00 (all in first tier)
-			// ws_api: 1M messages * $1.00/M = $1.00
+			// rest_api: 5M requests * $0.0000035 = $17.50
+			// http_api: 5M requests * $0.000001 = $5.00 (all in first tier)
+			// ws_api: 1M messages * $0.000001 = $1.00
 			// Total: $23.50
 			pcost, err = plan.PlannedCost()
 			assert.NoError(t, err)
@@ -923,7 +923,7 @@ func TestAWSEstimation(t *testing.T) {
 			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
 
 			// Zone: $0.50 (hosted zone)
-			// Standard queries: 1M / 1M * $0.40 = $0.40 (default usage)
+			// Standard queries: 1M * $0.0000004 = $0.40 (default usage)
 			// Basic health check: $0.50
 			// Custom health check: $0.75 + $0.50 (string match) + $0.50 (latency measurement) = $1.75
 			// Records: $0.00 (configuration-only)

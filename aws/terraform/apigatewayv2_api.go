@@ -38,8 +38,8 @@ type apigatewayv2APIValues struct {
 	ProtocolType string `mapstructure:"protocol_type"`
 
 	Usage struct {
-		MonthlyRequests       float64 `mapstructure:"monthly_requests"`
-		MonthlyMessageCount   float64 `mapstructure:"monthly_message_count"`
+		MonthlyRequests          float64 `mapstructure:"monthly_requests"`
+		MonthlyMessageCount      float64 `mapstructure:"monthly_message_count"`
 		MonthlyConnectionMinutes float64 `mapstructure:"monthly_connection_minutes"`
 	} `mapstructure:"tc_usage"`
 }
@@ -122,7 +122,7 @@ func (api *Apigatewayv2API) websocketComponents() []query.Component {
 func (api *Apigatewayv2API) httpRequestsComponent(startingRange string, quantity decimal.Decimal) query.Component {
 	return query.Component{
 		Name:            "HTTP API requests",
-		MonthlyQuantity: quantity.Div(invocationsPerMillion),
+		MonthlyQuantity: quantity,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(api.provider.key),
@@ -145,7 +145,7 @@ func (api *Apigatewayv2API) httpRequestsComponent(startingRange string, quantity
 func (api *Apigatewayv2API) websocketMessageComponent() query.Component {
 	return query.Component{
 		Name:            "WebSocket messages",
-		MonthlyQuantity: api.monthlyMessageCount.Div(invocationsPerMillion),
+		MonthlyQuantity: api.monthlyMessageCount,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(api.provider.key),

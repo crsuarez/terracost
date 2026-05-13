@@ -33,7 +33,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 
 		// Default usage: monthly_standard_queries=1_000_000
 		// Hosted zone: 1 zone-month = $0.50
-		// Standard queries: 1_000_000 / 1_000_000 = 1 million = $0.40
+		// Queries use the raw AWS PricePerUnit quantity.
 		expected := []query.Component{
 			{
 				Name:            "Hosted zone",
@@ -56,7 +56,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 			},
 			{
 				Name:            "Standard queries",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -94,9 +94,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 5M standard queries + 2M latency queries
-		// Standard: 5_000_000 / 1_000_000 = 5
-		// Latency: 2_000_000 / 1_000_000 = 2
+		// 5M standard queries + 2M latency queries.
 		expected := []query.Component{
 			{
 				Name:            "Hosted zone",
@@ -119,7 +117,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 			},
 			{
 				Name:            "Standard queries",
-				MonthlyQuantity: decimal.NewFromInt(5),
+				MonthlyQuantity: decimal.NewFromInt(5000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -140,7 +138,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 			},
 			{
 				Name:            "Latency-based queries",
-				MonthlyQuantity: decimal.NewFromInt(2),
+				MonthlyQuantity: decimal.NewFromInt(2000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -182,8 +180,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 3M geo queries
-		// Geo: 3_000_000 / 1_000_000 = 3
+		// 3M geo queries.
 		expected := []query.Component{
 			{
 				Name:            "Hosted zone",
@@ -206,7 +203,7 @@ func TestRoute53Zone_Components(t *testing.T) {
 			},
 			{
 				Name:            "Geo queries",
-				MonthlyQuantity: decimal.NewFromInt(3),
+				MonthlyQuantity: decimal.NewFromInt(3000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),

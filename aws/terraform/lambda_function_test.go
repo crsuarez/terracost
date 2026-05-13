@@ -32,12 +32,12 @@ func TestLambdaFunction_Components(t *testing.T) {
 		rss := map[string]terraform.Resource{}
 
 		// Default usage: monthly_requests=1_000_000, request_duration_ms=200
-		// Requests: 1_000_000 / 1_000_000 = 1
+		// Requests use the raw AWS PricePerUnit quantity.
 		// Duration GB-seconds: (128/1024) * 1_000_000 * (200/1000) = 25_000
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -101,14 +101,14 @@ func TestLambdaFunction_Components(t *testing.T) {
 		rss := map[string]terraform.Resource{}
 
 		// 2M requests, 500ms duration
-		// Requests: 2_000_000 / 1_000_000 = 2
+		// Requests use the raw AWS PricePerUnit quantity.
 		// Duration GB-seconds: (3008/1024) * 2_000_000 * (500/1000) = 2_937_500
 		// Ephemeral: 1024 MB - 512 MB = 512 MB = 0.5 GB
 		//   GB-seconds: 0.5 * 2_000_000 * 0.5 = 500_000
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(2),
+				MonthlyQuantity: decimal.NewFromInt(2000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -171,8 +171,8 @@ func TestLambdaFunction_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":                     2000000.0,
-			"request_duration_ms":                  500.0,
+			"monthly_requests":                        2000000.0,
+			"request_duration_ms":                     500.0,
 			"monthly_provisioned_concurrency_seconds": 0.0,
 		}
 		tfres.Values[usage.Key] = us
@@ -196,14 +196,14 @@ func TestLambdaFunction_Components(t *testing.T) {
 		rss := map[string]terraform.Resource{}
 
 		// 5M requests, 100ms duration
-		// Requests: 5_000_000 / 1_000_000 = 5
+		// Requests use the raw AWS PricePerUnit quantity.
 		// Duration GB-seconds: (256/1024) * 5_000_000 * (100/1000) = 125_000
 		// Ephemeral: 2048 - 512 = 1536 MB = 1.5 GB
 		//   GB-seconds: 1.5 * 5_000_000 * 0.1 = 750_000
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(5),
+				MonthlyQuantity: decimal.NewFromInt(5000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -266,8 +266,8 @@ func TestLambdaFunction_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":                     5000000.0,
-			"request_duration_ms":                  100.0,
+			"monthly_requests":                        5000000.0,
+			"request_duration_ms":                     100.0,
 			"monthly_provisioned_concurrency_seconds": 0.0,
 		}
 		tfres.Values[usage.Key] = us
@@ -288,13 +288,13 @@ func TestLambdaFunction_Components(t *testing.T) {
 		rss := map[string]terraform.Resource{}
 
 		// 1M requests, 300ms duration, 10M provisioned concurrency seconds
-		// Requests: 1_000_000 / 1_000_000 = 1
+		// Requests use the raw AWS PricePerUnit quantity.
 		// Duration GB-seconds: (512/1024) * 1_000_000 * (300/1000) = 150_000
 		// Provisioned concurrency GB-seconds: (512/1024) * 10_000_000 = 5_000_000
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(1),
+				MonthlyQuantity: decimal.NewFromInt(1000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -356,8 +356,8 @@ func TestLambdaFunction_Components(t *testing.T) {
 		}
 
 		us := map[string]interface{}{
-			"monthly_requests":                     1000000.0,
-			"request_duration_ms":                  300.0,
+			"monthly_requests":                        1000000.0,
+			"request_duration_ms":                     300.0,
 			"monthly_provisioned_concurrency_seconds": 10000000.0,
 		}
 		tfres.Values[usage.Key] = us

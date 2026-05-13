@@ -31,11 +31,11 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 5M requests / 1M = 5
+		// Requests use the raw AWS PricePerUnit quantity.
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(5),
+				MonthlyQuantity: decimal.NewFromInt(5000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -75,12 +75,12 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// Requests: 10M / 1M = 10
+		// Requests use the raw AWS PricePerUnit quantity.
 		// Cache: 6.1 GB, 744 hours/month
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(10),
+				MonthlyQuantity: decimal.NewFromInt(10000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
@@ -98,8 +98,8 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 				},
 			},
 			{
-				Name:            "Cache memory 6.1 GB",
-				HourlyQuantity:  decimal.NewFromInt(744),
+				Name:           "Cache memory 6.1 GB",
+				HourlyQuantity: decimal.NewFromInt(744),
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),
 					Service:  util.StringPtr("AmazonApiGateway"),
@@ -140,11 +140,11 @@ func TestAPIGatewayRestAPI_Components(t *testing.T) {
 		}
 		rss := map[string]terraform.Resource{}
 
-		// 500M requests / 1M = 500
+		// Requests use the raw AWS PricePerUnit quantity.
 		expected := []query.Component{
 			{
 				Name:            "Requests",
-				MonthlyQuantity: decimal.NewFromInt(500),
+				MonthlyQuantity: decimal.NewFromInt(500000000),
 				Usage:           true,
 				ProductFilter: &product.Filter{
 					Provider: util.StringPtr("aws"),

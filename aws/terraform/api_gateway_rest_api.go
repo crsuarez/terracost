@@ -16,14 +16,14 @@ import (
 // string representation used in pricing. Valid values: 0.5, 1.6, 6.1, 13.5,
 // 28.4, 58.2, 118, 237.
 var cacheSizeToGB = map[int64]string{
-	1:  "0.5",
-	2:  "1.6",
-	3:  "6.1",
-	4:  "13.5",
-	5:  "28.4",
-	6:  "58.2",
-	7:  "118",
-	8:  "237",
+	1: "0.5",
+	2: "1.6",
+	3: "6.1",
+	4: "13.5",
+	5: "28.4",
+	6: "58.2",
+	7: "118",
+	8: "237",
 }
 
 // hoursPerMonth is the number of hours in a 31-day month.
@@ -53,8 +53,8 @@ type apiGatewayRestAPIValues struct {
 // apiGatewayStageValues is used to decode aws_api_gateway_stage resources
 // for cross-resource cache lookup.
 type apiGatewayStageValues struct {
-	RestAPIID       string `mapstructure:"rest_api_id"`
-	CacheClusterSize int64 `mapstructure:"cache_cluster_size"`
+	RestAPIID        string `mapstructure:"rest_api_id"`
+	CacheClusterSize int64  `mapstructure:"cache_cluster_size"`
 }
 
 // decodeAPIGatewayRestAPIValues decodes and returns apiGatewayRestAPIValues from a Terraform values map.
@@ -168,7 +168,7 @@ func (api *APIGatewayRestAPI) Components() []query.Component {
 func (api *APIGatewayRestAPI) requestsComponent() query.Component {
 	return query.Component{
 		Name:            "Requests",
-		MonthlyQuantity: api.monthlyRequests.Div(invocationsPerMillion),
+		MonthlyQuantity: api.monthlyRequests,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(api.provider.key),
@@ -189,8 +189,8 @@ func (api *APIGatewayRestAPI) requestsComponent() query.Component {
 
 func (api *APIGatewayRestAPI) cacheComponent() query.Component {
 	return query.Component{
-		Name:            "Cache memory " + api.cacheSizeGB + " GB",
-		HourlyQuantity:  hoursPerMonth,
+		Name:           "Cache memory " + api.cacheSizeGB + " GB",
+		HourlyQuantity: hoursPerMonth,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(api.provider.key),
 			Service:  util.StringPtr("AmazonApiGateway"),

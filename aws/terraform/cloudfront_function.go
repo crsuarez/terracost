@@ -66,7 +66,7 @@ func (cf *CloudFrontFunction) Components() []query.Component {
 func (cf *CloudFrontFunction) invocationsComponent() query.Component {
 	return query.Component{
 		Name:            "Invocations",
-		MonthlyQuantity: cf.monthlyInvocations.Div(invocationsPerMillion),
+		MonthlyQuantity: cf.monthlyInvocations,
 		Usage:           true,
 		ProductFilter: &product.Filter{
 			Provider: util.StringPtr(cf.provider.key),
