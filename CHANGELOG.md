@@ -27,6 +27,7 @@
 - AWS support for `aws_api_gateway_rest_api` (REST API requests, optional cache memory with cross-resource stage lookup) and `aws_apigatewayv2_api` (HTTP API with tiered pricing, WebSocket messages and connection minutes)
 - AWS support for `aws_dynamodb_table` (on-demand RRU/WRU, provisioned RCU/WCU, storage, PITR backup, on-demand backup, streams, GSI)
 - AWS support for `aws_lambda_function` (requests, duration, ephemeral storage, provisioned concurrency)
+- AWS support for `aws_route53_zone` (hosted zone, standard/latency/geo DNS queries), `aws_route53_record` (routing policy identification), and `aws_route53_health_check` (basic AWS/custom endpoint, SNI, string matching, latency measurement, fast interval features)
 - Azurerm support for `azurerm_postgresql_flexible_server`
 - AWS support for `aws_cloudwatch_log_group`, `aws_cloudwatch_metric_alarm`, `aws_kms_key`, `aws_rds_cluster`, `aws_rds_cluster_instance`, `aws_s3_bucket`, `aws_s3_bucket_analytics_configuration`, `aws_s3_bucket_inventory`, `aws_secretsmanager_secret`, `aws_sqs_queue`
   ([Pull #131](https://github.com/cycloidio/terracost/pull/115))

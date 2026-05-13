@@ -173,4 +173,33 @@ func TestAWSIngestion(t *testing.T) {
 			assert.Len(t, prices, 1)
 		}
 	})
+	t.Run("Route53", func(t *testing.T) {
+		r53Ctrl := gomock.NewController(t)
+		defer r53Ctrl.Finish()
+
+		r53HTTPClient := mock.NewHTTPClient(r53Ctrl)
+
+		r53F, err := os.Open("testdata/aws/route53/AmazonRoute53_us-east-1.csv")
+		require.NoError(t, err)
+		defer r53F.Close()
+
+		r53HTTPClient.EXPECT().Do(gomock.Any()).Return(&http.Response{Body: r53F}, nil)
+
+		r53Backend := mysql.NewBackend(db)
+		r53Ingester, err := aws.NewIngester("AmazonRoute53", "us-east-1", aws.WithHTTPClient(r53HTTPClient))
+		require.NoError(t, err)
+
+		err = costestimation.IngestPricing(ctx, r53Backend, r53Ingester)
+		require.NoError(t, err)
+
+		r53Prods, err := r53Backend.Products().Filter(ctx, &product.Filter{Provider: util.StringPtr("aws"), Service: util.StringPtr("AmazonRoute53")})
+		require.NoError(t, err)
+		assert.Len(t, r53Prods, 8)
+
+		for _, prod := range r53Prods {
+			prices, err := r53Backend.Prices().Filter(ctx, prod.ID, nil)
+			require.NoError(t, err)
+			assert.Len(t, prices, 1)
+		}
+	})
 }

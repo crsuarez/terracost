@@ -184,6 +184,24 @@ func (p *Provider) ResourceComponents(rss map[string]terraform.Resource, tfRes t
 			return nil
 		}
 		return p.newNatGateway(vals).Components()
+	case "aws_route53_health_check":
+		vals, err := decodeRoute53HealthCheckValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newRoute53HealthCheck(rss, vals).Components()
+	case "aws_route53_record":
+		vals, err := decodeRoute53RecordValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newRoute53Record(rss, vals).Components()
+	case "aws_route53_zone":
+		vals, err := decodeRoute53ZoneValues(tfRes.Values)
+		if err != nil {
+			return nil
+		}
+		return p.newRoute53Zone(rss, vals).Components()
 	case "aws_rds_cluster":
 		vals, err := decodeRDSClusterValues(tfRes.Values)
 		if err != nil {

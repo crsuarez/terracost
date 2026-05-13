@@ -36,6 +36,8 @@ func MinimalFilter(pp *price.WithProduct) bool {
 		return true
 	case "AmazonRDS":
 		return minimalFilterRDS(pp)
+	case "AmazonRoute53":
+		return true // is minimal already
 	case "AmazonS3":
 		return minimalFilterS3Bucket(pp)
 	case "AWSDataTransfer":

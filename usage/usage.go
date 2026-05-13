@@ -117,6 +117,11 @@ var Default = Usage{
 			"monthly_requests": 15000000,
 			"request_size_kb":  16,
 		},
+		"aws_route53_zone": map[string]interface{}{
+			"monthly_standard_queries": 1000000,
+			"monthly_latency_queries":  0,
+			"monthly_geo_queries":      0,
+		},
 
 		// Azure
 		"azurerm_bastion_host": map[string]interface{}{

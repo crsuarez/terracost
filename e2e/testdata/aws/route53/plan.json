@@ -1,0 +1,298 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "1.0.0",
+    "planned_values": {
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_route53_zone.main",
+                    "mode": "managed",
+                    "type": "aws_route53_zone",
+                    "name": "main",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "name": "example.com"
+                    }
+                },
+                {
+                    "address": "aws_route53_record.simple",
+                    "mode": "managed",
+                    "type": "aws_route53_record",
+                    "name": "simple",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "zone_id": "Z1234567890",
+                        "name": "app.example.com",
+                        "type": "A"
+                    }
+                },
+                {
+                    "address": "aws_route53_record.latency",
+                    "mode": "managed",
+                    "type": "aws_route53_record",
+                    "name": "latency",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "zone_id": "Z1234567890",
+                        "name": "api.example.com",
+                        "type": "A",
+                        "set_identifier": "us-east-1",
+                        "latency_routing_policy": [
+                            {
+                                "region": "us-east-1"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "address": "aws_route53_health_check.basic",
+                    "mode": "managed",
+                    "type": "aws_route53_health_check",
+                    "name": "basic",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "type": "HTTP",
+                        "fqdn": "app.example.com",
+                        "port": 80,
+                        "request_interval": 30
+                    }
+                },
+                {
+                    "address": "aws_route53_health_check.custom",
+                    "mode": "managed",
+                    "type": "aws_route53_health_check",
+                    "name": "custom",
+                    "provider_name": "registry.terraform.io/hashicorp/aws",
+                    "schema_version": 0,
+                    "values": {
+                        "type": "HTTP_STR_MATCH",
+                        "fqdn": "health.example.com",
+                        "port": 80,
+                        "request_interval": 30,
+                        "measure_latency": true,
+                        "search_string": "OK"
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "aws_route53_zone.main",
+            "mode": "managed",
+            "type": "aws_route53_zone",
+            "name": "main",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "name": "example.com"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_route53_record.simple",
+            "mode": "managed",
+            "type": "aws_route53_record",
+            "name": "simple",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "zone_id": "Z1234567890",
+                    "name": "app.example.com",
+                    "type": "A"
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_route53_record.latency",
+            "mode": "managed",
+            "type": "aws_route53_record",
+            "name": "latency",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "zone_id": "Z1234567890",
+                    "name": "api.example.com",
+                    "type": "A",
+                    "set_identifier": "us-east-1",
+                    "latency_routing_policy": [
+                        {
+                            "region": "us-east-1"
+                        }
+                    ]
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_route53_health_check.basic",
+            "mode": "managed",
+            "type": "aws_route53_health_check",
+            "name": "basic",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "type": "HTTP",
+                    "fqdn": "app.example.com",
+                    "port": 80,
+                    "request_interval": 30
+                },
+                "after_unknown": {}
+            }
+        },
+        {
+            "address": "aws_route53_health_check.custom",
+            "mode": "managed",
+            "type": "aws_route53_health_check",
+            "name": "custom",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": ["create"],
+                "before": null,
+                "after": {
+                    "type": "HTTP_STR_MATCH",
+                    "fqdn": "health.example.com",
+                    "port": 80,
+                    "request_interval": 30,
+                    "measure_latency": true,
+                    "search_string": "OK"
+                },
+                "after_unknown": {}
+            }
+        }
+    ],
+    "configuration": {
+        "provider_config": {
+            "aws": {
+                "name": "aws-test",
+                "expressions": {
+                    "region": {
+                        "constant_value": "us-east-1"
+                    }
+                }
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "aws_route53_zone.main",
+                    "mode": "managed",
+                    "type": "aws_route53_zone",
+                    "name": "main",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "name": {
+                            "constant_value": "example.com"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_route53_record.simple",
+                    "mode": "managed",
+                    "type": "aws_route53_record",
+                    "name": "simple",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "zone_id": {
+                            "constant_value": "Z1234567890"
+                        },
+                        "name": {
+                            "constant_value": "app.example.com"
+                        },
+                        "type": {
+                            "constant_value": "A"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_route53_record.latency",
+                    "mode": "managed",
+                    "type": "aws_route53_record",
+                    "name": "latency",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "zone_id": {
+                            "constant_value": "Z1234567890"
+                        },
+                        "name": {
+                            "constant_value": "api.example.com"
+                        },
+                        "type": {
+                            "constant_value": "A"
+                        },
+                        "set_identifier": {
+                            "constant_value": "us-east-1"
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_route53_health_check.basic",
+                    "mode": "managed",
+                    "type": "aws_route53_health_check",
+                    "name": "basic",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "type": {
+                            "constant_value": "HTTP"
+                        },
+                        "fqdn": {
+                            "constant_value": "app.example.com"
+                        },
+                        "port": {
+                            "constant_value": 80
+                        },
+                        "request_interval": {
+                            "constant_value": 30
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "aws_route53_health_check.custom",
+                    "mode": "managed",
+                    "type": "aws_route53_health_check",
+                    "name": "custom",
+                    "provider_config_key": "aws",
+                    "expressions": {
+                        "type": {
+                            "constant_value": "HTTP_STR_MATCH"
+                        },
+                        "fqdn": {
+                            "constant_value": "health.example.com"
+                        },
+                        "port": {
+                            "constant_value": 80
+                        },
+                        "request_interval": {
+                            "constant_value": 30
+                        },
+                        "measure_latency": {
+                            "constant_value": true
+                        },
+                        "search_string": {
+                            "constant_value": "OK"
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ]
+        }
+    }
+}

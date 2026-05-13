@@ -16,6 +16,7 @@ var supportedServices = map[string]struct{}{
 	"AmazonElastiCache": {},
 	"AmazonFSx":         {},
 	"AmazonRDS":         {},
+	"AmazonRoute53":     {},
 	"AmazonS3":          {},
 	"AWSDataTransfer":   {},
 	"AWSELB":            {},

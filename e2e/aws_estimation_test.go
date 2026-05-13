@@ -285,6 +285,81 @@ func TestAWSEstimation(t *testing.T) {
 				"Group": "CloudFront-EdgeFunctions",
 			},
 		},
+		// Route 53 products
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-HOSTEDZONE",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Zone",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "HostedZone",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-STD-QUERIES",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Query",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "DNS-Queries",
+				"UsageType": "DNS-Queries",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-LAT-QUERIES",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Query",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "DNS-Queries",
+				"UsageType": "DNS-LatencyBasedRoutingQueries",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-HC-BASIC",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Health Check",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "HealthCheck-AWS-Endpoint",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-HC-CUSTOM",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Health Check",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group": "HealthCheck-Custom-Endpoint",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-HC-FEAT-STRMATCH",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Health Check",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "HealthCheck-Features",
+				"UsageType": "HealthCheck-StringMatch",
+			},
+		},
+		{
+			Provider: "aws-test",
+			SKU:      "TESTPROD-R53-HC-FEAT-LATENCY",
+			Service:  "AmazonRoute53",
+			Family:   "DNS Health Check",
+			Location: "us-east-1",
+			Attributes: map[string]string{
+				"Group":     "HealthCheck-Features",
+				"UsageType": "HealthCheck-LatencyMeasurement",
+			},
+		},
 	}
 
 	for _, p := range prods {
@@ -530,6 +605,84 @@ func TestAWSEstimation(t *testing.T) {
 				},
 			},
 		},
+		// Route 53 prices
+		{
+			Product: prods[21], // R53 hosted zone
+			Price: price.Price{
+				Unit:     "zones",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.50),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[22], // R53 standard queries
+			Price: price.Price{
+				Unit:     "Queries",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.40),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[23], // R53 latency queries
+			Price: price.Price{
+				Unit:     "Queries",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.60),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[24], // R53 basic health check
+			Price: price.Price{
+				Unit:     "HealthCheck",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.50),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[25], // R53 custom health check
+			Price: price.Price{
+				Unit:     "HealthCheck",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.75),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[26], // R53 health check string matching feature
+			Price: price.Price{
+				Unit:     "HealthCheck",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.50),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
+		{
+			Product: prods[27], // R53 health check latency measurement feature
+			Price: price.Price{
+				Unit:     "HealthCheck",
+				Currency: "USD",
+				Value:    decimal.NewFromFloat(0.50),
+				Attributes: map[string]string{
+					"TermType": "OnDemand",
+				},
+			},
+		},
 	}
 
 	for _, p := range prices {
@@ -756,6 +909,31 @@ func TestAWSEstimation(t *testing.T) {
 
 			diffs := plan.ResourceDifferences()
 			require.Len(t, diffs, 2)
+		})
+		t.Run("SuccessRoute53", func(t *testing.T) {
+			f, err := os.Open("../testdata/aws/route53/plan.json")
+			require.NoError(t, err)
+			defer f.Close()
+
+			plan, err := costestimation.EstimateTerraformPlan(ctx, backend, f, usage.Default, terraformAWSTestProviderInitializer)
+			require.NoError(t, err)
+
+			pcost, err := plan.PriorCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(0), ""), pcost)
+
+			// Zone: $0.50 (hosted zone)
+			// Standard queries: 1M / 1M * $0.40 = $0.40 (default usage)
+			// Basic health check: $0.50
+			// Custom health check: $0.75 + $0.50 (string match) + $0.50 (latency measurement) = $1.75
+			// Records: $0.00 (configuration-only)
+			// Total: $0.50 + $0.40 + $0.50 + $1.75 = $3.15
+			pcost, err = plan.PlannedCost()
+			assert.NoError(t, err)
+			assertCostEqual(t, cost.NewMonthly(decimal.NewFromFloat(3.15), "USD"), pcost)
+
+			diffs := plan.ResourceDifferences()
+			require.Len(t, diffs, 5)
 		})
 		t.Run("SuccessNoPrior", func(t *testing.T) {
 			f, err := os.Open("../testdata/aws/terraform-noprior-plan.json")
