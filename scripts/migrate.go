@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -12,7 +13,12 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:terracost@tcp(172.44.0.2:3306)/terracost_test?multiStatements=true")
+	dsn := os.Getenv("TERRACOST_DSN")
+	if dsn == "" {
+		dsn = "root:terracost@tcp(172.44.0.2:3306)/terracost_test?multiStatements=true"
+	}
+
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

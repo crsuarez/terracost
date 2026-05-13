@@ -1,0 +1,40 @@
+# Dockerfile.dev — terracost local development & test runner image
+#
+# Built from golang:1.25 to match the go.mod toolchain. Includes the
+# tooling needed for `make test`, `make generate`, and e2e fixture work:
+#   - git, make, bash, curl, gunzip   → build / migrate / seed scripts
+#   - default-mysql-client            → DB shell + dump injection
+#   - gcc + libc-dev                  → optional cgo builds
+#
+# The image is intended to be run via docker-compose.dev.yml, which mounts
+# the working tree at /workspace and the host Go module cache for speed.
+
+FROM golang:1.25-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    GOFLAGS=-mod=mod \
+    CGO_ENABLED=0
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+        git \
+        make \
+        bash \
+        curl \
+        ca-certificates \
+        gzip \
+        default-mysql-client \
+        gcc \
+        libc6-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+# Pre-warm a couple of dev tools the Makefile installs lazily.
+# These land in $GOPATH/bin which is on $PATH for the golang base image.
+RUN go install golang.org/x/tools/cmd/goimports@latest \
+ && go install github.com/dmarkham/enumer@latest
+
+# The image stays interactive — the test script `dev.sh` is the entry
+# point on the host side; inside the container we just want a shell.
+CMD ["bash"]

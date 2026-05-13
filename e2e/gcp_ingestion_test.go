@@ -28,7 +28,7 @@ func TestGoogleIngestion(t *testing.T) {
 		cred    []byte
 	)
 
-	db, err := sql.Open("mysql", "root:terracost@tcp(172.44.0.2:3306)/terracost_test?multiStatements=true")
+	db, err := sql.Open("mysql", testDSN())
 	require.NoError(t, err)
 
 	ts := testutil.StartGoogleServer(t)

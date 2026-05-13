@@ -1,0 +1,73 @@
+# docker-compose.dev.yml — local dev/test stack for the fork
+#
+# Mirrors the network layout of the upstream docker-compose.yml so the
+# MySQL DSN hard-coded in scripts/migrate.go and e2e tests
+# (root:terracost@tcp(172.44.0.2:3306)/terracost_test) still resolves.
+#
+# Differences from upstream compose:
+#   - runner image is built from Dockerfile.dev (Go 1.25, matches go.mod)
+#   - runner mounts the working tree at /workspace + a named Go cache vol
+#   - healthcheck on MySQL replaces the dokku/wait sidecar
+#   - distinct project name so it doesn't collide with upstream compose
+
+name: terracost-dev
+
+services:
+  database:
+    image: mysql:8.0.42
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: terracost
+      MYSQL_DATABASE: terracost_test
+    ports:
+      - "33060:3306"
+    networks:
+      terracost-subnet:
+        ipv4_address: 172.44.0.2
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pterracost"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - terracost-mysql-data:/var/lib/mysql
+
+  runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: terracost-dev:latest
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - terracost-go-cache:/go/pkg/mod
+      - terracost-go-build:/root/.cache/go-build
+    environment:
+      GOFLAGS: -mod=mod
+      CGO_ENABLED: "0"
+      MYSQL_HOST: 172.44.0.2
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: terracost
+      MYSQL_DATABASE: terracost_test
+    networks:
+      terracost-subnet:
+        ipv4_address: 172.44.0.3
+    depends_on:
+      database:
+        condition: service_healthy
+    # Stay alive so `docker compose exec runner …` works from the host script.
+    command: ["sleep", "infinity"]
+    tty: true
+
+networks:
+  terracost-subnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.44.0.0/16
+
+volumes:
+  terracost-mysql-data:
+  terracost-go-cache:
+  terracost-go-build:

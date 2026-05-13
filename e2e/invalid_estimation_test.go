@@ -23,7 +23,7 @@ func TestVMWareEstimation(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	db, err := sql.Open("mysql", "root:terracost@tcp(172.44.0.2:3306)/terracost_test?multiStatements=true")
+	db, err := sql.Open("mysql", testDSN())
 	require.NoError(t, err)
 
 	backend := mysql.NewBackend(db)
